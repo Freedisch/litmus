@@ -1,3 +1,0 @@
-- Support for KubernetesVersion and OpenEBSVersion in ChaosExporter
-- Addition of BDD tests for ChaosOperator and ChaosExporter
-- Introduce [ChaosHub](hub.litmuschaos.io) to render chaos charts (generic and OpenEBS chaos) 
