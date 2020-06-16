@@ -1,2 +1,2 @@
-LitmusChaos Objective & High Level Design 
-LitmusChaos Components
+- LitmusChaos Objective & High Level Design
+- LitmusChaos Components
