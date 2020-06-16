@@ -1,4 +1,8 @@
-Welcome to the litmus wiki!
+Welcome to the LitmusChaos project wiki! This wiki hosts useful resources which will help you understand the project better. 
 
-The primary documentation of the LitmusChaos project is being hosted at https://docs.litmuschaos.io/
-For a list of all the issues created under LitmusChaos Project, check this [Issue Tracker](https://github.com/litmuschaos/litmus/issues)
+## Resources 
+
+- To get started with Litmus and learn more about different chaos experiment, visit [Litmus Documentation](https://docs.litmuschaos.io)
+- For a list of all the issues (bugs, enhancement/feature requests) created under LitmusChaos Project, check [Issue Tracker](https://github.com/litmuschaos/litmus/issues)
+- To learn about the project milestones & track the LitmusChaos evolution, view [Milestones]()
+
