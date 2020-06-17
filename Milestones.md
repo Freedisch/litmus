@@ -18,3 +18,4 @@ Refer: https://github.com/litmuschaos/litmus/milestone/20
 
 - Improvements to the chaos scheduler 
   - Improved OpenAPI based schema validation for the .spec.schedule 
+  - Support of randomized injection of chaos in "repeat" mode
