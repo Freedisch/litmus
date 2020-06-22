@@ -9,5 +9,6 @@ Welcome to the LitmusChaos project wiki! This wiki hosts useful resources which 
 - Refer to [Code  Structure](https://github.com/litmuschaos/litmus/wiki/Code-Structure-&-Project-Repositories) to understand how the LitmusChaos code is organized
 - Study the [Chaos Integration](https://docs.google.com/presentation/d/1OGuSisuory7jE-LvrDyC6J9x1wdom2Bowc0Fso6F4Ps/edit#slide=id.g836279615b_0_56) slide deck to understand how, as a developer, you can integrate other chaos tools with Litmus
 - Learn about & subscribe to the [Special Interest Groups](https://github.com/litmuschaos/litmus/wiki/Special-Interest-Groups) in LitmusChaos to pursue your area of passion within the broader Chaos Engineering practice 
+- Here is a set of [presentations]() around Litmus, by the community & for the community! 
 
 
