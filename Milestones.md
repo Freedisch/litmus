@@ -1,8 +1,6 @@
 LitmusChaos Releases
 
-## 1.6.0
-
-Refer: https://github.com/litmuschaos/litmus/milestone/20
+## 1.7.0
 
 ### Objectives
 
@@ -16,25 +14,45 @@ Refer: https://github.com/litmuschaos/litmus/milestone/20
   * [ ] e2e suite with ~50% coverage for "current" capabilities
   * [ ] Basic usage and developer documentation
 
+## 1.6.1
+
+### Objectives
+
+- (Enhancement) Improvements to CI infrastructure
+  * [ ] Add Dockerfile linter in Travis CI
+  * [ ] K8s manifest validation for charts & operator manifests
+
 - (Enhancement) Improvements to the chaos scheduler 
-  * [ ] Improved OpenAPI based schema validation for the .spec.schedule 
   * [ ] Support of randomized injection of chaos in "repeat" mode
 
-- (Enhancement) Improvements to the validating webhook admission controller
-  * [ ] Validation for ConfigMap and Secret volume dependencies on the cluster
-  * [ ] Validation of .spec.schedule of the ChaosSchedule (call out mutually fields, time ranges)
-
 - (Enhancement) Improvements to the chaos experiments / chaoslib
-  * [ ] Add experiment execution summary event in chaosresult 
   * [ ] Add support network-chaos on containerd & crio runtimes
 
 - (Enhancement) Improvements to the chaos infrastructure (operator, runner) 
   * [ ] Add check gates and bulk chaos injections at namespace level
-  * [ ] Add overrides for experiment image & imagePullPolicy from ChaosEngine
   
-- (Enhancement) Improvements to CI infrastructure
-  * [ ] Add Dockerfile linter in Travis CI
-  * [ ] K8s manifest validation for charts & operator manifests
+## 1.6.0
+
+Refer: https://github.com/litmuschaos/litmus/milestone/20
+
+### Objectives
+
+- (Enhancement) Improvements to the validating webhook admission controller
+  * [x] Validation for ConfigMap and Secret volume dependencies on the cluster
+  * [x] Validation of .spec.schedule of the ChaosSchedule (call out mutually fields, time ranges)
+
+- (Enhancement) Improvements to the chaos experiments / chaoslib
+  * [x] Add experiment execution summary event in chaosresult 
+  * [x] Add the complete generic chaos suite to litmus-go
+
+- (Enhancement) Improvements to the chaos infrastructure (operator, runner) 
+  * [x] Add overrides for experiment image & imagePullPolicy from ChaosEngine
+
+- (Enhancement) Improvements to the chaos scheduler 
+  * [x] Improved OpenAPI based schema validation for the .spec.schedule 
+
+- (Enhancement) Improvements to CI/E2E infrastructure
+  * [x] E2E results & coverage dashboard at https://litmuschaos.github.io/litmus-e2e/
   
 ## 1.5.1
 
@@ -43,23 +61,23 @@ Refer: https://github.com/litmuschaos/litmus/milestone/21
 ### Objectives
 
 - (New Feature) Improvements to chaos infrastructure
-  * [ ] Add support for securitycontext definition of experiment pods
-  * [ ] Add support for pod scheduling policies of experiment pods
+  * [x] Add support for securitycontext definition of experiment pods
+  * [x] Add support for pod scheduling policies of experiment pods
 
 - (New Feature) New chaos experiments 
-  * [ ] Add go-based chaoslib for pod-memory-hog experiment
+  * [x] Add go-based chaoslib for pod-memory-hog experiment
 
 - (Tech Preview/PoC) Improvements to chaoslib
-  * [ ] Litmus native chaoslib for network chaos experiments (nsenter-based)
+  * [x] Litmus native chaoslib for network chaos experiments (nsenter-based)
 
 - (Enhancement) Improvements to the validating webhook admission controller
-  * [ ] Validate app labels'propagation into podTemplateSpec of AUT (application-under-test)
+  * [x] Validate app labels'propagation into podTemplateSpec of AUT (application-under-test)
 
 - (Enhancement) Improvements to CI infrastructure
-  * [ ] Extend /run-e2e-tests capability to chaos operator, chaos-runner & litmus-go repos
+  * [x] Extend /run-e2e-tests capability to chaos operator, chaos-runner & litmus-go repos
 
 - (Enhancement) Improvements to Documentation
-  * [ ] Upgrades in LitmusChaos
-  * [ ] Litmus uninstallation
+  * [x] Upgrades in LitmusChaos
+  * [x] Litmus uninstallation
   
   
