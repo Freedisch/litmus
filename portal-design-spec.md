@@ -216,7 +216,7 @@ SRE wants to see whats going on with a workflow either voluntarily or after seei
 
 **For visualization and analytics**
 
-- Victor or plotly
+- Plotly
 
 **Compatibility**
 
