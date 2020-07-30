@@ -1,2 +1,2 @@
 - [LitmusChaos Objective & High Level Design](https://docs.google.com/presentation/d/1QpiUWbUadtwAXkEn_LesteYxNNGPeSC-c4WxIuMfMS0/edit?ts=5f0b5801#slide=id.g25ca91f87f_0_0)
-- LitmusChaos Components
+- [LitmusChaos Components](https://docs.google.com/presentation/d/1Cmjjh0Cii9BfT03VKHArL9GuWFUCc-dBVhNWWqeOZds/edit?usp=sharing)
