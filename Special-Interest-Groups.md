@@ -28,7 +28,7 @@ Some of the planned (& informally operational) SIGs with links to their charters
  
 # SIG Details 
 
-This section describes each SIG in detail. Each SIG is described with its own set of objectives/goals, non-goals, one or more rotating SIG-chairs, and the repositories under the SIG's purview. 
+This section describes each SIG in detail. Each SIG is described with its own set of objectives, one or more rotating SIG-chairs, and the repositories under the SIG's purview. The SIGs are expected to become operational soon with TBD items filled up and may outgrow/themselves into new ones or merge into others, if really necessary. 
 
 ## SIG-Integrations 
 
