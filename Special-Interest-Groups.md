@@ -1,4 +1,4 @@
-## Litmus SIGs 
+# Litmus SIGs 
 
 (as of 10/08/2020)
 
@@ -26,3 +26,58 @@ Some of the planned (& informally operational) SIGs with links to their charters
 - [SIG-Documentation]()
 - [SIG-Orchestration]()
  
+# SIG Details 
+
+This section describes each SIG in detail. 
+
+## SIG-Integrations Charter
+
+### Note
+
+_This SIG is expected to comprise, amongst others, of_:
+
+ _(a) Members who are using Litmus to orchestrate their existing chaos experiments (using Pumba, Chaostoolkit, Powerfulseal, etc., or any other custom chaos logic)_
+
+_(b) Members who are using other abstractions to run litmus experiments, for ex: Argo Workflows_
+
+
+### Goals
+
+- Contribute requirements and maintain the plugin code supporting the BYOC (Bring-Your-Own-Chaos) model of execution in LitmusChaos (co-maintain this with SIG-Orchestration) 
+
+- Maintain the respective Chaos Experiment business logic & (CRs)/Charts running custom chaoslib on the ChaosHub 
+
+- Establish the patterns in providing the monitoring & reporting hooks consistent with native litmus experiments, for the respective chaos integrations 
+
+- Contribute to the CI/E2E processes around the chaos integrations & plugin code to maintain quality 
+
+- Maintain developer & user documentation, demo artefacts/examples associated with usage of the respective chaos integrations 
+
+- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Integration
+
+- Support queries in the community (slack/email) over questions and issues around the chaos integrations
+
+### Non-Goals
+
+*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG*
+
+- Replicate the existing experiment suites with the chaos tool/integration
+
+### Chairs/Leads
+
+- [Sumit Nagal](https://github.com/sumitnagal)
+- [Vijay Thomas](https://github.com/vijayto)
+
+### Repositories
+
+- [litmuschaos/litmus-python](https://github.com/litmuschaos/litmus-python)
+- [litmuschaos/chaos-workflows](https://github.com/litmuschaos/chaos-workflows)
+- [litmuschaos/chaos-runner](https://github.com/litmuschaos/chaos-runner) [co-maintain with SIG-Orchestration]
+- [litmuschaos/chaos-charts](https://github.com/litmuschaos/chaos-charts) [co-maintain with SIG-Deployment & SIG-Chaos]
+
+### SIG Meeting Cadence
+
+- Meeting Notes:
+- Meeting Cadence:
+- Zoom Link:
+- SIG-Documentation Meet Recordings:
