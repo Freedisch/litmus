@@ -1,19 +1,5 @@
 LitmusChaos Releases
 
-## 1.7.0
-
-### Objectives
-
-- (New Feature) An alpha version of the Litmus UI/Portal to schedule chaos experiments and workflows on your Kubernetes Cluster
-  * [ ] One fully functional pre-defined chaos workflow on the charthub
-  * [ ] A detailed product design specification doc 
-  * [ ] Figma designs for the portal on the repo
-  * [ ] A basic UI that is able to execute the aforementioned chaos workflow
-  * [ ] Basic authentication login of the portal
-  * [ ] A well-defined CI/CD pipeline (build/test/release/deploy) mechanism 
-  * [ ] e2e suite with ~50% coverage for "current" capabilities
-  * [ ] Basic usage and developer documentation
-
 ## 1.6.1
 
 ### Objectives
