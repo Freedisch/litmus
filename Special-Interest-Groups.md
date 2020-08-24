@@ -77,11 +77,20 @@ _(b) Members who are using other abstractions to run litmus experiments, for ex:
 
 ### SIG Meeting Cadence
 
-- Meeting Notes:
-- Meeting Cadence:
-- Zoom Link:
-- SIG-Documentation Meet Recordings:
+- Meeting Notes: <zoom link> / have settings to ensure invitees alone join.
+- Meeting Cadence: 6.30 - 7.30  PM Mondays (weekly initially, we can do fortnightly eventually)
+- Zoom Link: <hangouts or zoom?> zoom link? 
+- SIG-Documentation Meet Recordings: <youtube>
 
+### 24/08: 
+
+- Practice around release notes in Kubernetes project  (Divya) 
+- CODEOWNERS (Jayesh, Divya, Karthik) (for review) (Karthik)
+- How to get started with contributions to Docs (contributing.md - Jayesh) (create first good issues - Karthik) 
+- Standards (Divya)
+- Ask for help to improve docs and improve their "effectiveness/meaningfulness?" - twitter/slack/discord - Get litmuschaos to tweet this for reach & retweet by maintainers for credibility. -- Check with litmus-dev team. 
+- Ensure welcome message in litmus slack has docs-link & Docs GFIs 
+- Docusaurus and setting up a local env for docs contribution - this is very helpful -(session doing this) -- team
 ------------------
 
 
