@@ -91,6 +91,18 @@ _(b) Members who are using other abstractions to run litmus experiments, for ex:
 - Ask for help to improve docs and improve their "effectiveness/meaningfulness?" - twitter/slack/discord - Get litmuschaos to tweet this for reach & retweet by maintainers for credibility. -- Check with litmus-dev team. 
 - Ensure welcome message in litmus slack has docs-link & Docs GFIs 
 - Docusaurus and setting up a local env for docs contribution - this is very helpful -(session doing this) -- team
+
+### 31/08: 
+
+- Release Notes (detailed) as section in docs (Karthik)
+- Add more good first issues (pre-requisite)
+- Contrib  (Jayesh, Karthik) (https://github.com/litmuschaos/litmus/issues/1942) --Important
+  - contrib guide for docs (litmuschaos/litmus-docs)
+  - Generic contribution doc (https://github.com/litmuschaos/litmus/blob/master/CONTRIBUTING.md -- enhance to point to docs contrib guide)
+  - Add a reference to generic contrib guide in litmuschaos/litmus in website/other prominent places (hub?) 
+  - How can this be made available to slack members? Does k8s workspace allow bots? 
+- Language support for docs!! - How does CI change ? - can we get docusaurus example (github README) (https://docusaurus.io/docs/en/translation)(Jayesh, Divya) 
+------------------
 ------------------
 
 
