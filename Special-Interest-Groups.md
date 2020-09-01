@@ -77,34 +77,11 @@ _(b) Members who are using other abstractions to run litmus experiments, for ex:
 
 ### SIG Meeting Cadence
 
-- Meeting Notes: <zoom link> / have settings to ensure invitees alone join.
-- Meeting Cadence: 6.30 - 7.30  PM Mondays (weekly initially, we can do fortnightly eventually)
-- Zoom Link: <hangouts or zoom?> zoom link? 
-- SIG-Documentation Meet Recordings: <youtube>
-
-### 24/08: 
-
-- Practice around release notes in Kubernetes project  (Divya) 
-- CODEOWNERS (Jayesh, Divya, Karthik) (for review) (Karthik)
-- How to get started with contributions to Docs (contributing.md - Jayesh) (create first good issues - Karthik) 
-- Standards (Divya)
-- Ask for help to improve docs and improve their "effectiveness/meaningfulness?" - twitter/slack/discord - Get litmuschaos to tweet this for reach & retweet by maintainers for credibility. -- Check with litmus-dev team. 
-- Ensure welcome message in litmus slack has docs-link & Docs GFIs 
-- Docusaurus and setting up a local env for docs contribution - this is very helpful -(session doing this) -- team
-
-### 31/08: 
-
-- Release Notes (detailed) as section in docs (Karthik)
-- Add more good first issues (pre-requisite)
-- Contrib  (Jayesh, Karthik) (https://github.com/litmuschaos/litmus/issues/1942) --Important
-  - contrib guide for docs (litmuschaos/litmus-docs)
-  - Generic contribution doc (https://github.com/litmuschaos/litmus/blob/master/CONTRIBUTING.md -- enhance to point to docs contrib guide)
-  - Add a reference to generic contrib guide in litmuschaos/litmus in website/other prominent places (hub?) 
-  - How can this be made available to slack members? Does k8s workspace allow bots? 
-- Language support for docs!! - How does CI change ? - can we get docusaurus example (github README) (https://docusaurus.io/docs/en/translation)(Jayesh, Divya) 
+- Meeting Notes: 
+- Meeting Cadence: 
+- Zoom Link: 
+- SIG-Documentation Meet Recordings: 
 ------------------
-------------------
-
 
 ## SIG-Observability
 
@@ -353,10 +330,10 @@ SIG-Documentation Meet Recordings:
 
 ### SIG Meeting Cadence
 
-- Meeting Notes:
-- Meeting Cadence:
-- Zoom Link:
-- SIG-Documentation Meet Recordings:
+- Meeting Notes: https://docs.google.com/document/d/1Z9DrnA8W_IM2HnVOWU1dtVrVB9MyWj8VP43YS_A_wFs/edit#
+- Meeting Cadence: Weekly (Every Monday, 6.30-7.30 PM IST)
+- Zoom Link: https://zoom.us/j/91358162694
+- SIG-Documentation Meet Recordings: Yet to be Recorded
 
 --------------------
 
