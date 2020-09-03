@@ -128,10 +128,10 @@ _(b) Members who are interested in developing plugins for integrating Litmus wit
 
 ### SIG Meeting Cadence
 
-- Meeting Notes:
-- Meeting Cadence:
-- Zoom Link:
-- SIG-Documentation Meet Recordings
+- Meeting Notes: https://docs.google.com/document/d/1Sn46eF7xoTLgD8yat-XXw5RblXHb6CFbUyyKHwyAaME/edit?usp=sharing
+- Meeting Cadence: Weekly (Every Thursday, 8.00 PM - 9.00 PM IST) (TBD)
+- Zoom/Hangouts Link: https://meet.google.com/zys-cxfp-xkn (TBD)
+- SIG-Documentation Meet Recordings: 
 
 ----------------------
 
