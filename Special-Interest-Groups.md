@@ -117,8 +117,8 @@ _(b) Members who are interested in developing plugins for integrating Litmus wit
 
 ### Chairs/Leads
 
-- TBD
-- TBD
+- Shantanu Deshpande
+- Any more volunteers!! 
 
 ### Repositories
 
