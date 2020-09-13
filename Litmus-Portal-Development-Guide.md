@@ -1,9 +1,13 @@
 # Litmus Portal development Guide
 
 ## Frontend
-- cd litmus/litmus-portal/frontend
-- npm install 
-- npm start
+```
+cd litmus/litmus-portal/frontend
+
+npm install 
+
+npm start
+```
 
 ## Backend
 
