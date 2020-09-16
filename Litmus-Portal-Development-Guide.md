@@ -213,10 +213,6 @@ Percentage of the requests served within a certain time (ms)
  100%     33 (longest request)
 ```
 
-### Formulating a Hypothesis
-
-Typically, in most production deployments, the Nginx service is set up to guarantee specific SLAs in terms of tolerated errors, etc., While, say, under normal circumstances, the server performs as expected, it is also necessary to gauge how much degradation is seen for different levels of failures & what the cascading impact may be on others applications. The results obtained by inducing chaos may give us an idea on how best to manage the deployment (improved high availability configuration, resources allocated, replica counts, etc.,) to continue to meet the SLA despite a certain degree of failure (while that is an interesting topic to discuss for another day, we shall restrict the scope of this blog to demonstrating how workflows can be used!)
-
 In the next step, we shall execute a chaos workflow that runs the same benchmark job while a random pod-delete (Nginx replica failure) occurs and observe the degradation in the attributes we have noted: failed_requests.
 
 ### Create the Chaos Workflow
@@ -341,7 +337,7 @@ Query variables:
 ```
 
 You will get the JWT key on the side panel now.
-Open a browser window with the URL: localhost:8080/file/<jwt_key>.yaml
+Open a browser window with the URL: `localhost:8080/file/<jwt_key>.yaml`
 
 ### Retrieve the Cluster ID and key
 
