@@ -1,7 +1,5 @@
 # Litmus Portal development Guide
 
-This is a detailed guide towards setting up the litmus development environment locally, if you are only interested in getting the portal up and running, you can skip **“Nginx traffic characteristics during a non-chaotic benchmark run”** and **“Observe the Nginx benchmark results”** sub-sections in the Wokflow Agent section.
-
 ## Frontend
 
 ```
@@ -155,75 +153,6 @@ clusterrolebinding.rbac.authorization.k8s.io/chaos-cluster-role-binding created
 
 ```
 
-### Nginx traffic characteristics during a non-chaotic benchmark run
-
-Before proceeding with the chaos workflows, let us first look at how the benchmark run performs under normal circumstances & what are the properties of note.
-
-To achieve this:
-
-- Let us run a simple Kubernetes job that internally executes an apache-bench test on the Nginx service with a standard input of 10000000 requests over a 300s period.
-
-```
-root@demo:~# kubectl create -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/App/nginx-bench.yaml
-
-job.batch/nginx-bench-c9m42 created
-```
-
-- Observe the output post the 5 min duration & note the failed request count. Usually, it is 0, i.e., there was no disruption in Nginx traffic.
-
-```
-root@demo:~# kubectl logs -f nginx-bench-zq689-6mnrm
-
-2020/06/23 01:42:29 Running: ab -r -c10 -t300 -n 10000000 http://nginx.default.svc.cluster.local:80/
-2020/06/23 01:47:35 This is ApacheBench, Version 2.3 <$Revision: 1706008 $>
-Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
-Licensed to The Apache Software Foundation, http://www.apache.org/
-
-Benchmarking nginx.default.svc.cluster.local (be patient)
-Finished 808584 requests
-
-
-Server Software:        nginx/1.19.0
-Server Hostname:        nginx.default.svc.cluster.local
-Server Port:            80
-
-Document Path:          /
-Document Length:        612 bytes
-
-Concurrency Level:      10
-Time taken for tests:   300.001 seconds
-Complete requests:      808584
-Failed requests:        0
-Total transferred:      683259395 bytes
-HTML transferred:       494857692 bytes
-Requests per second:    2695.27 [#/sec] (mean)
-Time per request:       3.710 [ms] (mean)
-Time per request:       0.371 [ms] (mean, across all concurrent requests)
-Transfer rate:          2224.14 [Kbytes/sec] received
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:        0    1   0.7      0      25
-Processing:     0    3   2.0      3      28
-Waiting:        0    3   1.9      2      28
-Total:          0    4   2.2      3      33
-WARNING: The median and mean for the initial connection time are not within a normal deviation
-        These results are probably not that reliable.
-
-Percentage of the requests served within a certain time (ms)
-  50%      3
-  66%      4
-  75%      5
-  80%      5
-  90%      7
-  95%      8
-  98%      9
-  99%     11
- 100%     33 (longest request)
-```
-
-In the next step, we shall execute a chaos workflow that runs the same benchmark job while a random pod-delete (Nginx replica failure) occurs and observe the degradation in the attributes we have noted: failed_requests.
-
 ### Create the Chaos Workflow
 
 Applying the workflow manifest performs the following actions in parallel:
@@ -254,64 +183,6 @@ root@demo:~# kubectl patch svc argo-server -n argo -p '{"spec": {"type": "NodePo
 service/argo-server patched
 ```
 ![Argo visualisation](https://res.cloudinary.com/practicaldev/image/fetch/s--MkzlakSi--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://user-images.githubusercontent.com/21166217/82098260-38738b00-9722-11ea-81b4-b3c466a60080.png)
-
-### Observe the Nginx benchmark results
-
-Observing the Nginx benchmark results over 300s with a single random pod kill shows an increased count of failed requests.
-
-```
-root@demo:~# kubectl logs -f nginx-bench-7pnvv
-
-2020/06/23 07:00:34 Running: ab -r -c10 -t300 -n 10000000 http://nginx.default.svc.cluster.local:80/
-2020/06/23 07:05:37 This is ApacheBench, Version 2.3 <$Revision: 1706008 $>
-Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
-Licensed to The Apache Software Foundation, http://www.apache.org/
-
-Benchmarking nginx.default.svc.cluster.local (be patient)
-Finished 802719 requests
-
-
-Server Software:        nginx/1.19.0
-Server Hostname:        nginx.default.svc.cluster.local
-Server Port:            80
-
-Document Path:          /
-Document Length:        612 bytes
-
-Concurrency Level:      10
-Time taken for tests:   300.000 seconds
-Complete requests:      802719
-Failed requests:        866
-   (Connect: 0, Receive: 289, Length: 289, Exceptions: 288)
-Total transferred:      678053350 bytes
-HTML transferred:       491087160 bytes
-Requests per second:    2675.73 [#/sec] (mean)
-Time per request:       3.737 [ms] (mean)
-Time per request:       0.374 [ms] (mean, across all concurrent requests)
-Transfer rate:          2207.20 [Kbytes/sec] received
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:        0    0  11.3      0    3044
-Processing:     0    3  57.2      3   16198
-Waiting:        0    3  54.2      2   16198
-Total:          0    4  58.3      3   16199
-
-Percentage of the requests served within a certain time (ms)
-  50%      3
-  66%      4
-  75%      4
-  80%      5
-  90%      6
-  95%      7
-  98%      9
-  99%     11
- 100%  16199 (longest request)
-```
-
-Further iterations of these tests with increased pod-kill instances over the benchmark period or an increased kill count (i.e., number of replicas killed at a time) can give more insights about the behavior of the service, in turn leading us to the mitigation procedures.
-
-**Note**: To test with different variables, edit the ChaosEngine spec in the workflow manifest before re-submission.
 
 ### Get CLUSTER_ID & ACCESS_KEY
 
