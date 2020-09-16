@@ -1,5 +1,8 @@
 # Litmus Portal development Guide
 
+This is a detailed guide towards setting up the litmus development environment locally, if you are only interested in getting the portal up and running, you can skip “Nginx traffic characteristics during a non-chaotic benchmark run” and “Observe the Nginx benchmark results” sub-sections in the Wokflow Agent section
+
+
 ## Frontend
 ```
 cd litmus/litmus-portal/frontend
@@ -387,7 +390,7 @@ Create litmus namespace if it’s not created:
 
 Change the present directory to the subscriber folder:
 
-`cd litmus/litmus-portal/backend/subscriber`
+`cd /litmus/litmus-portal/cluster-agents/subscriber`
 
 Enter the following command with your CID = <cluster ID> string in field “cluster_id” and the KEY=<Cluster Key> as the string in the “newClusterKey” field.
 
