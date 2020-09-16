@@ -1,46 +1,55 @@
 # Litmus Portal development Guide
 
-This is a detailed guide towards setting up the litmus development environment locally, if you are only interested in getting the portal up and running, you can skip “Nginx traffic characteristics during a non-chaotic benchmark run” and “Observe the Nginx benchmark results” sub-sections in the Wokflow Agent section
-
+This is a detailed guide towards setting up the litmus development environment locally, if you are only interested in getting the portal up and running, you can skip **“Nginx traffic characteristics during a non-chaotic benchmark run”** and **“Observe the Nginx benchmark results”** sub-sections in the Wokflow Agent section.
 
 ## Frontend
+
 ```
 cd litmus/litmus-portal/frontend
 
 npm install 
 
 npm start
-
 ```
+
+**Please Note that for the local development setup to work correctly, you will have to enable a CORS extension on your browser**; you can find one [here](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en) or use one of your own preference. Please make sure it is enabled for the Litmus portal before proceeding with the following steps
+
 ## Backend
 
 ### Setup MONGODB
+
 ```
 sudo mkdir -p /mongodata
 
 sudo docker run -it -v /data/db:/mongodata -p 27017:27017 --name mongodb -d mongo
 ```
+
 ### Start servers
 
 1. GQL Server
+
 ```
 cd litmus/litmus-portal/graphql-server
 
 DEPLOYER_IMAGE=itmuschaos/litmusportal-self-deployer:ci SUBSCRIBER_IMAGE=litmuschaos/litmusportal-subscriber:ci SERVICE_ADDRESS=localhost:8080 DB_SERVER=localhost:27017 JWT_SECRET=litmus-portal@123 go run server.go
 ```
+
 let the server run in the background.
 
 2. Authentication Server
+
 ```
 cd litmus/litmus-portal/authentication
 
 DB_SERVER=mongodb://localhost:27017 JWT_SECRET=litmus-portal@123 ADMIN_USERNAME=admin ADMIN_PASSWORD=litmus go run src/main.go
 ```
+
 let the server run in the background.
 
 ## Workflow agent
 
 Start a minikube instance on your local machine:
+
 ```
 minikube start 
 ```
