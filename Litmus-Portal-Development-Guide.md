@@ -1,16 +1,34 @@
 # Litmus Portal development Guide
 
-## Frontend
+## Pre-requisites
+
+**NOTE: This setup has been written on Ubuntu 20.04 LTS as the setup environment, Based on your version of Linux Distribution, some commands may vary, please find the alternative commands accordingly in case there is some syntactical difference that was missed in this guide.**
+
+- Install golang-go:
 
 ```
-cd litmus/litmus-portal/frontend
-
-npm install 
-
-npm start
+sudo apt install golang-go
 ```
 
-**Please Note that for the local development setup to work correctly, you will have to enable a CORS extension on your browser**; you can find one [here](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en) or use one of your own preference. Please make sure it is enabled for the Litmus portal before proceeding with the following steps
+- Install nodejs:
+
+```
+sudo apt install nodejs
+```
+
+- Install the Node-package-manager:
+
+```
+sudo apt install npm
+```
+
+- Setup docker:
+
+```
+sudo apt install docker.io
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+```
 
 ## Backend
 
@@ -43,6 +61,21 @@ DB_SERVER=mongodb://localhost:27017 JWT_SECRET=litmus-portal@123 ADMIN_USERNAME=
 ```
 
 let the server run in the background.
+
+## Frontend
+
+**Please Note that for the local development setup to work correctly, you will have to enable a CORS extension on your browser**; you can find one [here](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en) or use one of your own preference. Please make sure it is enabled for the Litmus portal immediately after following the next set of steps:
+
+
+```
+cd litmus/litmus-portal/frontend
+
+npm install 
+
+npm start
+```
+
+After having enabled CORS as mentioned above, you can stop at this point if your goal is restricted to getting a feel of the portal/contribute to the frontend. To set up the complete functionalities i.e. Chaos Workflow scheduling and visualisations, please continue following the steps as mentioned:
 
 ## Workflow agent
 
