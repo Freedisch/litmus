@@ -45,9 +45,8 @@ sudo docker run -it -v /data/db:/mongodata -p 27017:27017 --name mongodb -d mong
 1. GQL Server
 
 ```
-cd litmus/litmus-portal/graphql-server
-
-DEPLOYER_IMAGE=litmuschaos/litmusportal-self-deployer:ci SUBSCRIBER_IMAGE=litmuschaos/litmusportal-subscriber:ci SERVICE_ADDRESS=localhost:8080 DB_SERVER=localhost:27017 JWT_SECRET=litmus-portal@123 go run server.go
+cd litmus/litmus-portal/
+bash run.sh gql
 ```
 
 let the server run in the background.
@@ -55,9 +54,8 @@ let the server run in the background.
 2. Authentication Server
 
 ```
-cd litmus/litmus-portal/authentication
-
-DB_SERVER=mongodb://localhost:27017 JWT_SECRET=litmus-portal@123 ADMIN_USERNAME=admin ADMIN_PASSWORD=litmus go run src/main.go
+cd litmus/litmus-portal/
+bash run.sh auth
 ```
 
 let the server run in the background.
