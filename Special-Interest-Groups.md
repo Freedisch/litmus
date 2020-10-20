@@ -373,7 +373,6 @@ SIG-Documentation Meet Recordings:
 ### Chairs/Leads
 
 - @rahulchheda 
-- @ksatchit 
 - @chandankumar4 
 
 ### Repositories 
