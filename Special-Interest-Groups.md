@@ -30,59 +30,6 @@ Some of the planned (& informally operational) SIGs with links to their charters
 
 This section describes each SIG in detail. Each SIG is described with its own set of objectives, one or more rotating SIG-chairs, and the repositories under the SIG's purview. The SIGs are expected to become operational soon with TBD items filled up and may outgrow/themselves into new ones or merge into others, if really necessary. 
 
-## SIG-Integrations 
-
-### Note
-
-_This SIG is expected to comprise, amongst others, of_:
-
- _(a) Members who are using Litmus to orchestrate their existing chaos experiments (using Pumba, Chaostoolkit, Powerfulseal, etc., or any other custom chaos logic)_
-
-_(b) Members who are using other abstractions to run litmus experiments, for ex: Argo Workflows_
-
-
-### Goals
-
-- Contribute requirements and maintain the plugin code supporting the BYOC (Bring-Your-Own-Chaos) model of execution in LitmusChaos (co-maintain this with SIG-Orchestration) 
-
-- Maintain the respective Chaos Experiment business logic & (CRs)/Charts running custom chaoslib on the ChaosHub 
-
-- Establish the patterns in providing the monitoring & reporting hooks consistent with native litmus experiments, for the respective chaos integrations 
-
-- Contribute to the CI/E2E processes around the chaos integrations & plugin code to maintain quality 
-
-- Maintain developer & user documentation, demo artefacts/examples associated with usage of the respective chaos integrations 
-
-- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Integration
-
-- Support queries in the community (slack/email) over questions and issues around the chaos integrations
-
-### Non-Goals
-
-*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG*
-
-- Replicate the existing experiment suites with the chaos tool/integration
-
-### Chairs/Leads
-
-- [Sumit Nagal](https://github.com/sumitnagal)
-- [Vijay Thomas](https://github.com/vijayto)
-
-### Repositories
-
-- [litmuschaos/litmus-python](https://github.com/litmuschaos/litmus-python)
-- [litmuschaos/chaos-workflows](https://github.com/litmuschaos/chaos-workflows)
-- [litmuschaos/chaos-runner](https://github.com/litmuschaos/chaos-runner) [co-maintain with SIG-Orchestration]
-- [litmuschaos/chaos-charts](https://github.com/litmuschaos/chaos-charts) [co-maintain with SIG-Deployment & SIG-Chaos]
-
-### SIG Meeting Cadence
-
-- Meeting Notes: 
-- Meeting Cadence: 
-- Zoom Link: 
-- SIG-Documentation Meet Recordings: 
-------------------
-
 ## SIG-Observability
 
 ### Note
@@ -117,8 +64,8 @@ _(b) Members who are interested in developing plugins for integrating Litmus wit
 
 ### Chairs/Leads
 
-- Shantanu Deshpande
-- Any more volunteers!! 
+- Shantanu Deshpande (Deutsche Bank)
+- Kristin Barkardottir (NetApp)
 
 ### Repositories
 
@@ -131,156 +78,63 @@ _(b) Members who are interested in developing plugins for integrating Litmus wit
 - Meeting Notes: https://docs.google.com/document/d/1Sn46eF7xoTLgD8yat-XXw5RblXHb6CFbUyyKHwyAaME/edit?usp=sharing
 - Meeting Cadence: Weekly (Every Thursday, 8.00 PM - 9.00 PM IST) (TBD)
 - Zoom/Hangouts Link: https://meet.google.com/zys-cxfp-xkn (TBD)
-- SIG-Documentation Meet Recordings: 
+- SIG Meet Recordings: 
 
 ----------------------
 
-## SIG-Deployment 
+## SIG-Orchestration
 
 ### Goals
 
-- Facilitate an easy & flexible deployment experience for LitmusChaos via standard frameworks (manifests, helm charts) 
-- Enable effective lifecycle management (including seamless upgrades) for Litmus framework components (Operators, CR/CRDs) 
-- Identify and maintain the standard application delivery entry points for Litmus manifests 
+- Contribute requirements, use-cases & code to enhance the core orchestration infrastructure in Litmus. Areas include: 
 
-  - LitmusChaos Helm Repo
-  - Helm Hub
-  - JFrog ChartCenter
-  - OperatorHub
-  - CNCF Artifact Hub
---
+  - Simplification/lowering entry-level barriers for chaos 
+  - Adding to criteria or filters for chaos
+  - Static & runtime validation of user inputs 
+  - State management of chaos resources
+  - Improvements to the schema of chaos CRs 
+  - Scheduling policies for chaos 
+  - Increased Chaos targets (resources & Kubernetes platforms) support 
+  - Ensuring Scalability of the orchestration components (operator, runner, scheduler, admission-controller, experiments)  
 
-- Revisit the deployment artefacts in every release and review/approve enhancements to the deployment bundles by the other (functionality) SIGs as part of the release
+- Improving the design/code patterns and framework used for orchestration operations (reconciliation, resource management). Best practices and quality control (BCH, Go-Report, etc.,) 
 
-- Contribute documentation in the form of READMEs & usage guides in the litmus-docs around deployment methods. 
+- Improved logging, creation of metrics indicating the health of the chaos infrastructure
 
-- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Deployment
+- Support for operation in air-gapped environments 
 
-- Support queries in the community (slack/email) over questions around deployment practices and issues. 
+- Improvements to the CI infrastructure with increased unit test coverage, e2e/BDD-based integration tests
 
-### Non-Goals 
+- Maintain developer & user documentation, deploy artifacts/examples associated with the individual orchestration pieces. 
 
-*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG* 
+- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Orchestration
 
-- Submit PRs to add new product capabilities into the deployment bundles
-
-### Chairs/Leads:
-
-- [Maria Kotlyarevskaya](https://github.com/Jasstkn)
-- [Karthik Satchitanand](https://github.com/ksatchit)
-
-### Repositories
-
-- [litmuschaos/litmus](https://github.com/litmuschaos/litmus/tree/master/docs)
-- [litmuschaos/litmus-helm](https://github.com/litmuschaos/litmus-helm)
-- [litmuschaos/chaos-charts](https://github.com/litmuschaos/chaos-charts) [co-maintain with SIG-Chaos & SIG-Integrations]
-
-### SIG Meeting Cadence
-
-- Meeting Notes: 
-- Meeting Cadence: 
-- Zoom Link: 
-- SIG-Deployment Meet Recordings: 
-
------------------------
-
-## SIG-CI
-
-### Note
-
-_This SIG is expected to comprise, amongst others, of_:
-
-_(a) Members who are using litmus experiments as part of their CI pipelines, for ex: via Gitlab Remote Templates, Github Actions, Jenkins Job Templates, etc.,_
-
-### Goals
-
-- Contribute requirements & drive implementation around hooks needed in litmus chaos infrastructure to execute experiments as CI jobs for the respective CI platforms (interface with the SIG-Chaos & SIG-Orchestration to achieve this)
-
-- Help in the creation & maintenance of reusable job templates for usage in respective CI platforms, with a well-defined release cadence 
-
-- Implement and maintain the pipeline artfeacts & public cluster infrastructure (where applicable) for on-demand execution of the supported CI frameworks
-
-- Maintain developer & user documentation along with examples associated with the chaos CI job templates 
-
-- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-CI
-
-- Support queries in the community (slack/email) over questions and issues around the chaos integrations
+- Support queries in the community (slack/email) over questions and issues around chaos orchestration 
 
 ### Non-Goals
 
-*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG* 
-
-- Implement experiment or chaos infrastructure changes necessary to support execution as CI jobs 
+- TBA
 
 ### Chairs/Leads
 
-- [Udit Gaurav](https://github.com/uditgaurav)
+- @rahulchheda (InfraCloud)
+- @chandankumar4 (MayaData)
 
-### Repositories
+### Repositories 
 
-- [Gitlab Remote Templates](https://github.com/mayadata-io/gitlab-remote-templates)
-- [Github Chaos Actions](https://github.com/mayadata-io/github-chaos-actions)
-- [Chaos CI Lib](https://github.com/mayadata-io/chaos-ci-lib)
+- [litmuschaos/chaos-operator](https://github.com/litmuschaos/chaos-operator)
+- [litmuschaos/chaos-runner](https://github.com/litmuschaos/chaos-runner)
+- [litmuschaos/chaos-scheduler](https://github.com/litmuschaos/chaos-scheduler)
+- [litmuschaos/admission-controller](https://github.com/litmuschaos/admission-controller)
 
 ### SIG Meeting Cadence
 
-- Meeting Notes:
-- Meeting Cadence:
-- Zoom Link:
-- SIG-Documentation Meet Recordings:
+- Meeting Notes: https://docs.google.com/document/d/1f9vvQ1o0UymrKP3IsXNsFQ0xq8CFMTdvB-lnm_WFPoI/edit
+- Meeting Cadence: Bi-Weekly (Tuesdays, 8:00-9:00 PM IST)
+- Zoom/Hangouts Link: meet.google.com/ymq-cpga-wvk
+- SIG Meet Recordings:
 
 ------------------
-
-## SIG-Testing 
-
-### Goals
-
-- Create cross-reference docs around test strategy for the chaos management, orchestration and experiment business logic
-
-- Create detailed test plans around litmuschaos functionality with a focus on both positive & failure paths. Maintain test/scenario coverage trackers with additions in every release. Interface with SIG-Chaos & SIG-Orchestration to review and drive the implementation of this plan. 
-
-- Establish practices around the automation of identified test scenarios using BDD/e2e test frameworks such as Ginkgo-Gomega, D-Operators & maintain the test libraries. 
-
-- Maintain the e2e Gitlab pipeline artefacts and setup/monitor automated execution of these pipelines, with reporting mechanisms to update history on the [e2e portal](https://litmuschaos.github.io/litmus-e2e)
-
--  Identify and extend the e2e suite for interoperability on supported chaos platforms & maintain the compatibility matrix in terms of 
-
-    - Runtime 
-    - Kubernetes Platforms (On-premise, Clouds) 
-    - Operating Systems
- 
-- Implement & maintain hooks (interface with bots where necessary) into CI processes for on-demand execution of the e2e tests/suite via GitHub Actions with functionality into report unto PRs
-
-- Maintain developer & user documentation associated with usage (standalone/manual execution) of the respective e2e suites
-
-- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Testing
-
-- Support queries in the community (slack/email) over questions around e2e status of release candidates, flaky-tests, and user execution of e2e suites. 
-
- ### Non-Goals
-
-*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG*
-
-- Write e2e tests for functionality added as part of the release (this is expected to be added by the respective developers / SIG pushing this functionality) 
-
-### Chairs/Leads
-
-- [Udit Gaurav](https://github.com/uditgaurav)
-- [Shubham Chaudhary](https://github.com/ispeakc0de)
-
-### Repositories
-
-- [litmuschaos/litmus-e2e](https://github.com/litmuschaos/litmus-e2e)
-
-### SIG Meeting Cadence
-
-Meeting Notes:
-Meeting Cadence:
-Zoom Link:
-SIG-Documentation Meet Recordings:
-
-
-----------------------
 
 ## SIG-Documentation
 
@@ -333,62 +187,207 @@ SIG-Documentation Meet Recordings:
 - Meeting Notes: https://docs.google.com/document/d/1Z9DrnA8W_IM2HnVOWU1dtVrVB9MyWj8VP43YS_A_wFs/edit#
 - Meeting Cadence: Weekly (Every Monday, 6.30-7.30 PM IST)
 - Zoom Link: https://zoom.us/j/91358162694
-- SIG-Documentation Meet Recordings: Yet to be Recorded
+- SIG Meet Recordings: 
 
---------------------
+--------------------------
 
-## SIG-Orchestration
+## SIG-Integrations 
+
+### Note
+
+_This SIG is expected to comprise, amongst others, of_:
+
+ _(a) Members who are using Litmus to orchestrate their existing chaos experiments (using Pumba, Chaostoolkit, Powerfulseal, etc., or any other custom chaos logic)_
+
+_(b) Members who are using other abstractions to run litmus experiments, for ex: Argo Workflows_
+
 
 ### Goals
 
-- Contribute requirements, use-cases & code to enhance the core orchestration infrastructure in Litmus. Areas include: 
+- Contribute requirements and maintain the plugin code supporting the BYOC (Bring-Your-Own-Chaos) model of execution in LitmusChaos (co-maintain this with SIG-Orchestration) 
 
-  - Simplification/lowering entry-level barriers for chaos 
-  - Adding to criteria or filters for chaos
-  - Static & runtime validation of user inputs 
-  - State management of chaos resources
-  - Improvements to the schema of chaos CRs 
-  - Scheduling policies for chaos 
-  - Increased Chaos targets (resources & Kubernetes platforms) support 
-  - Ensuring Scalability of the orchestration components (operator, runner, scheduler, admission-controller, experiments)  
+- Maintain the respective Chaos Experiment business logic & (CRs)/Charts running custom chaoslib on the ChaosHub 
 
-- Improving the design/code patterns and framework used for orchestration operations (reconciliation, resource management). Best practices and quality control (BCH, Go-Report, etc.,) 
+- Establish the patterns in providing the monitoring & reporting hooks consistent with native litmus experiments, for the respective chaos integrations 
 
-- Improved logging, creation of metrics indicating the health of the chaos infrastructure
+- Contribute to the CI/E2E processes around the chaos integrations & plugin code to maintain quality 
 
-- Support for operation in air-gapped environments 
+- Maintain developer & user documentation, demo artifacts/examples associated with usage of the respective chaos integrations 
 
-- Improvements to the CI infrastructure with increased unit test coverage, e2e/BDD-based integration tests
+- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Integration
 
-- Maintain developer & user documentation, deploy artifacts/examples associated with the individual orchestration pieces. 
-
-- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Orchestration
-
-- Support queries in the community (slack/email) over questions and issues around chaos orchestration 
+- Support queries in the community (slack/email) over questions and issues around the chaos integrations
 
 ### Non-Goals
 
-- TBA
+*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG*
+
+- Replicate the existing experiment suites with the chaos tool/integration
 
 ### Chairs/Leads
 
-- @rahulchheda 
-- @chandankumar4 
+- [Sumit Nagal](https://github.com/sumitnagal)
+- [Vijay Thomas](https://github.com/vijayto)
 
-### Repositories 
+### Repositories
 
-- [litmuschaos/chaos-operator](https://github.com/litmuschaos/chaos-operator)
-- [litmuschaos/chaos-runner](https://github.com/litmuschaos/chaos-runner)
-- [litmuschaos/chaos-scheduler](https://github.com/litmuschaos/chaos-scheduler)
-- [litmuschaos/admission-controller](https://github.com/litmuschaos/admission-controller)
+- [litmuschaos/litmus-python](https://github.com/litmuschaos/litmus-python)
+- [litmuschaos/chaos-workflows](https://github.com/litmuschaos/chaos-workflows)
+- [litmuschaos/chaos-runner](https://github.com/litmuschaos/chaos-runner) [co-maintain with SIG-Orchestration]
+- [litmuschaos/chaos-charts](https://github.com/litmuschaos/chaos-charts) [co-maintain with SIG-Deployment & SIG-Chaos]
+
+### SIG Meeting Cadence
+
+- Meeting Notes: 
+- Meeting Cadence: 
+- Zoom Link: 
+- SIG Meet Recordings: 
+
+-----------------------------
+
+## SIG-Deployment 
+
+### Goals
+
+- Facilitate an easy & flexible deployment experience for LitmusChaos via standard frameworks (manifests, helm charts) 
+- Enable effective lifecycle management (including seamless upgrades) for Litmus framework components (Operators, CR/CRDs) 
+- Identify and maintain the standard application delivery entry points for Litmus manifests 
+
+  - LitmusChaos Helm Repo
+  - Helm Hub
+  - JFrog ChartCenter
+  - OperatorHub
+  - CNCF Artifact Hub
+--
+
+- Revisit the deployment artifacts in every release and review/approve enhancements to the deployment bundles by the other (functionality) SIGs as part of the release
+
+- Contribute documentation in the form of READMEs & usage guides in the litmus-docs around deployment methods. 
+
+- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Deployment
+
+- Support queries in the community (slack/email) over questions around deployment practices and issues. 
+
+### Non-Goals 
+
+*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG* 
+
+- Submit PRs to add new product capabilities into the deployment bundles
+
+### Chairs/Leads:
+
+- [Maria Kotlyarevskaya](https://github.com/Jasstkn)
+- [Karthik Satchitanand](https://github.com/ksatchit)
+
+### Repositories
+
+- [litmuschaos/litmus](https://github.com/litmuschaos/litmus/tree/master/docs)
+- [litmuschaos/litmus-helm](https://github.com/litmuschaos/litmus-helm)
+- [litmuschaos/chaos-charts](https://github.com/litmuschaos/chaos-charts) [co-maintain with SIG-Chaos & SIG-Integrations]
+
+### SIG Meeting Cadence
+
+- Meeting Notes: 
+- Meeting Cadence: 
+- Zoom Link: 
+- SIG Meet Recordings: 
+
+-----------------------
+
+## SIG-CI
+
+### Note
+
+_This SIG is expected to comprise, amongst others, of_:
+
+_(a) Members who are using litmus experiments as part of their CI pipelines, for ex: via Gitlab Remote Templates, Github Actions, Jenkins Job Templates, etc.,_
+
+### Goals
+
+- Contribute requirements & drive implementation around hooks needed in litmus chaos infrastructure to execute experiments as CI jobs for the respective CI platforms (interface with the SIG-Chaos & SIG-Orchestration to achieve this)
+
+- Help in the creation & maintenance of reusable job templates for usage in respective CI platforms, with a well-defined release cadence 
+
+- Implement and maintain the pipeline artfeacts & public cluster infrastructure (where applicable) for on-demand execution of the supported CI frameworks
+
+- Maintain developer & user documentation along with examples associated with the chaos CI job templates 
+
+- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-CI
+
+- Support queries in the community (slack/email) over questions and issues around the chaos integrations
+
+### Non-Goals
+
+*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG* 
+
+- Implement experiment or chaos infrastructure changes necessary to support execution as CI jobs 
+
+### Chairs/Leads
+
+- [Udit Gaurav](https://github.com/uditgaurav)
+
+### Repositories
+
+- [Gitlab Remote Templates](https://github.com/mayadata-io/gitlab-remote-templates)
+- [Github Chaos Actions](https://github.com/mayadata-io/github-chaos-actions)
+- [Chaos CI Lib](https://github.com/mayadata-io/chaos-ci-lib)
 
 ### SIG Meeting Cadence
 
 - Meeting Notes:
 - Meeting Cadence:
 - Zoom Link:
-- SIG-Documentation Meet Recordings:
+- SIG Meet Recordings:
 
+------------------
+
+## SIG-Testing 
+
+### Goals
+
+- Create cross-reference docs around test strategy for the chaos management, orchestration and experiment business logic
+
+- Create detailed test plans around litmuschaos functionality with a focus on both positive & failure paths. Maintain test/scenario coverage trackers with additions in every release. Interface with SIG-Chaos & SIG-Orchestration to review and drive the implementation of this plan. 
+
+- Establish practices around the automation of identified test scenarios using BDD/e2e test frameworks such as Ginkgo-Gomega, D-Operators & maintain the test libraries. 
+
+- Maintain the e2e Gitlab pipeline artifacts and setup/monitor automated execution of these pipelines, with reporting mechanisms to update history on the [e2e portal](https://litmuschaos.github.io/litmus-e2e)
+
+-  Identify and extend the e2e suite for interoperability on supported chaos platforms & maintain the compatibility matrix in terms of 
+
+    - Runtime 
+    - Kubernetes Platforms (On-premise, Clouds) 
+    - Operating Systems
+ 
+- Implement & maintain hooks (interface with bots where necessary) into CI processes for on-demand execution of the e2e tests/suite via GitHub Actions with functionality into report unto PRs
+
+- Maintain developer & user documentation associated with usage (standalone/manual execution) of the respective e2e suites
+
+- Provide well-defined governance and contribution guidelines for the GitHub repositories under the purview of SIG-Testing
+
+- Support queries in the community (slack/email) over questions around e2e status of release candidates, flaky-tests, and user execution of e2e suites. 
+
+ ### Non-Goals
+
+*Note: Can be picked optionally if the SIG members are interested, as part of the scope/representative of a different SIG*
+
+- Write e2e tests for functionality added as part of the release (this is expected to be added by the respective developers / SIG pushing this functionality) 
+
+### Chairs/Leads
+
+- [Udit Gaurav](https://github.com/uditgaurav)
+- [Shubham Chaudhary](https://github.com/ispeakc0de)
+
+### Repositories
+
+- [litmuschaos/litmus-e2e](https://github.com/litmuschaos/litmus-e2e)
+
+### SIG Meeting Cadence
+
+Meeting Notes:
+Meeting Cadence:
+Zoom Link:
+SIG Meet Recordings:
 
 
 
