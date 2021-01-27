@@ -385,7 +385,9 @@ _(a) Members who are using litmus experiments as part of their CI pipelines, for
 ### SIG Meeting Cadence
 
 Meeting Notes: https://docs.google.com/document/d/1QHTM9ypEwxn5js8-5reqbZycM7JQSamYv9w_ldu-WQw/edit?usp=sharing
+
 Meeting Cadence: Weekly (Every Wednesday, 8.30-9.00 PM IST)
+
 Hangout Link: https://meet.google.com/euw-mzzg-gti
 SIG Meet Recordings:
 
