@@ -17,11 +17,11 @@ Start a minikube instance on your local machine:
 minikube start 
 ```
 
-Or, Any Kubernetes cluster
+Or, any Kubernetes cluster
 
 ## Backend
 
-### Setup MONGODB
+### Setup MongoDB
 
 ```sh
   kubectl apply -f https://gist.githubusercontent.com/rajdas98/a9a6a175ab55418fa4517c3c7074fb8d/raw/11e697dc1766a4c44bf4a2d9b399bbdcd23211c8/mongodb.yaml -n litmus
