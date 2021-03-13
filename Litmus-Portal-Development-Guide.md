@@ -4,40 +4,28 @@
 
 **NOTE: This setup has been written on Ubuntu 20.04 LTS as the setup environment, Based on your version of Linux Distribution, some commands may vary, please find the alternative commands accordingly in case there is some syntactical difference that was missed in this guide.**
 
-- Install golang-go:
+- GoLang (> 1.13)
+- NodeJS
+- NPM
+- Kubernetes Cluster
+
+## Local Setup
+
+Start a minikube instance on your local machine:
 
 ```
-sudo apt install golang-go
+minikube start 
 ```
 
-- Install nodejs:
-
-```
-sudo apt install nodejs
-```
-
-- Install the Node-package-manager:
-
-```
-sudo apt install npm
-```
-
-- Setup docker:
-
-```
-sudo apt install docker.io
-sudo systemctl enable --now docker
-sudo usermod -aG docker $USER
-```
+Or, Any Kubernetes cluster
 
 ## Backend
 
 ### Setup MONGODB
 
-```
-sudo mkdir -p /mongodata
-
-sudo docker run -it -v /data/db:/mongodata -p 27017:27017 --name mongodb -d mongo
+```sh
+  kubectl apply -f https://gist.githubusercontent.com/rajdas98/a9a6a175ab55418fa4517c3c7074fb8d/raw/11e697dc1766a4c44bf4a2d9b399bbdcd23211c8/mongodb.yaml -n litmus
+  kubectl port-forward svc/mongo-service -n litmus 27017:27017
 ```
 
 ### Start servers
@@ -76,12 +64,6 @@ npm start
 After having enabled CORS as mentioned above, you can stop at this point if your goal is restricted to getting a feel of the portal/contribute to the frontend. To set up the complete functionalities i.e. Chaos Workflow scheduling and visualisations, please continue following the steps as mentioned:
 
 ## Workflow agent
-
-Start a minikube instance on your local machine:
-
-```
-minikube start 
-```
 
 ### Install Argo Workflow Infrastructure
 
