@@ -284,7 +284,7 @@ Change the present directory to the subscriber folder:
 Enter the following command with your CID = <cluster ID> string in field “cluster_id” and the KEY=<Cluster Key> as the string in the “newClusterKey” field.
 
 
-` AGENT_SCOPE="cluster" AGENT_NAMESPACE="litmus" CID=<CLUSTER_ID> KEY=<ACCESS_KEY> GQL_SERVER=http://localhost:8080/query go run subscriber.go -kubeconfig ~/.kube/config `
+` AGENT_SCOPE="cluster" AGENT_NAMESPACE="litmus" CLUSTER_ID=<CLUSTER_ID> ACCESS_KEY=<ACCESS_KEY> SERVER_ADDR=http://localhost:8080/query go run subscriber.go -kubeconfig ~/.kube/config `
 
 ## Generate workflow events:
 
