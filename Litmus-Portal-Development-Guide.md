@@ -1,297 +1,152 @@
-# Litmus Portal development Guide
+# Litmus Developer Guide
 
-## Pre-requisites
+> NOTE: This setup has been written on Ubuntu 20.04 LTS as the setup environment, Based on your version of Linux Distribution, some commands may vary, please find the alternative commands accordingly in case there is some syntactical difference that was missed in this guide.
 
-**NOTE: This setup has been written on Ubuntu 20.04 LTS as the setup environment, Based on your version of Linux Distribution, some commands may vary, please find the alternative commands accordingly in case there is some syntactical difference that was missed in this guide.**
+## **Pre-requisites**
 
-- GoLang (> 1.13)
-- NodeJS
-- NPM
-- Kubernetes Cluster
+Here are a few things you need to make sure are already present in your system before running Litmus locally
 
-## Local Setup
+* Kubernetes 1.15 or higher
+* Helm3 or Kubectl
+* Node and npm
+* Docker
+* Local Kubernetes Cluster (via minikube, k3s or kind)
 
-Start a minikube instance on your local machine:
+## **Start your local Kubernetes cluster instance**
 
-```
-minikube start 
-```
+From a terminal with administrator access, run:
 
-Or, any Kubernetes cluster
-
-## Backend
-
-### Setup MongoDB
-
-```sh
-  kubectl apply -f https://gist.githubusercontent.com/rajdas98/a9a6a175ab55418fa4517c3c7074fb8d/raw/11e697dc1766a4c44bf4a2d9b399bbdcd23211c8/mongodb.yaml -n litmus
-  kubectl port-forward svc/mongo-service -n litmus 27017:27017
+```bash
+minikube start
 ```
 
-### Start servers
+<span style="color:green">**Expected Output**</span>
 
-1. GQL Server
+```bash
+😄  minikube v1.12.1 on Ubuntu 20.04
+🎉  minikube 1.18.1 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.18.1
+💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
 
-```
-cd litmus/litmus-portal/
-bash run.sh gql
-```
-
-let the server run in the background.
-
-2. Authentication Server
-
-```
-cd litmus/litmus-portal/
-bash run.sh auth
+✨  Using the docker driver based on existing profile
+👍  Starting control plane node minikube in cluster minikube
+🏃  Updating the running docker "minikube" container ...
+🐳  Preparing Kubernetes v1.18.3 on Docker 19.03.2 ...
+🔎  Verifying Kubernetes components...
+🌟  Enabled addons: default-storageclass, storage-provisioner
+🏄  Done! kubectl is now configured to use "minikube"
 ```
 
-let the server run in the background.
+Once done, you’d be able to interact with your cluster and run kubectl commands
+> *Initially, some services such as the storage-provisioner, may not yet be in a Running state. This is a normal condition during cluster bring-up and will resolve itself momentarily.*
 
-## Frontend
+***
 
-**Please Note that for the local development setup to work correctly, you will have to enable a CORS extension on your browser**; you can find one [here](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en) or use one of your own preference. Please make sure it is enabled for the Litmus portal immediately after following the next set of steps:
+## **Install Litmus**
 
+### **Through Helm**
 
+* **Create a Litmus namespace**
+  
+  ```bash
+  kubectl create ns litmus
+  ```
+
+* **Add the Litmus Helm Chart**
+
+  ```bash
+  git clone https://github.com/litmuschaos/litmus-helm
+  cd litmus-helm
+  ```
+
+* **Install Litmus**
+  
+  ```bash
+  helm install litmuschaos --namespace litmus ./charts/litmus-2-0-0-beta/
+  ```
+
+> NOTE: To change the chart version to the latest CI for the local development setup, you can navigate to the `charts/litmus-2-0-0-beta/values.yml` and then modify all the type `tag` to have `ci` as the value.
+
+### **Through Kubernetes Manifest**
+
+* **Applying the latest beta manifest**
+
+  ```bash
+  kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
+  ```
+
+* **Applying the master stable manifest**
+
+  ```bash
+  kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
+  ```
+
+***
+
+## **Setup the Portal services locally**
+
+To set up and log in to Litmus Portal locally, expand the available services just created and look for the `litmusportal-server-service` service in the `litmus` namespace s since the server service contains GraphQL and Authentication required for the portal.
+
+```bash
+kubectl get svc -n litmus
 ```
+
+<span style="color:green">**Expected Output**</span>
+
+```bash
+NAME                            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                         AGE
+chaos-litmus-portal-mongo       ClusterIP   10.104.107.117   <none>        27017/TCP                       2m
+litmusportal-frontend-service   NodePort    10.101.81.70     <none>        9091:30385/TCP                  2m
+litmusportal-server-service     NodePort    10.108.151.79    <none>        9002:32456/TCP,9003:31160/TCP   2m
+```
+
+Since this is your local setup and you won’t have the prediction environment backing you up, you’d need to configure authentication and GraphQL services manually for the application to simulate the ideal behaviour.
+
+## **To enable**
+
+* **Authentication**
+
+  ```bash
+  kubectl port-forward svc/litmusportal-server-service 3000:9003 -n litmus
+  ```
+  > We’re using 3000 as our local authentication server
+
+* **GraphQL**
+
+  ```bash
+  kubectl port-forward svc/litmusportal-server-service 8080:9002 -n litmus
+  ```
+  > We’re using 8080 as our local GraphQL server
+
+***
+
+## **Access the Portal locally**
+
+If you haven’t already cloned the litmus project do so from the `litmuschaos/litmus` repository
+
+```bash
+git clone https://github.com/litmuschaos/litmus.git litmus
+```
+
+Once cloned, navigate to the frontend directory inside the `litmus-portal` folder
+
+```bash
 cd litmus/litmus-portal/frontend
-
-npm install 
-
-npm start
 ```
 
-After having enabled CORS as mentioned above, you can stop at this point if your goal is restricted to getting a feel of the portal/contribute to the frontend. To set up the complete functionalities i.e. Chaos Workflow scheduling and visualisations, please continue following the steps as mentioned:
+When you are inside the frontend directory, install all the dependencies and run the project locally.
 
-## Workflow agent
-
-### Install Argo Workflow Infrastructure
-
-- Create an Argo namespace:
-
-```
-root@demo:~/chaos-workflows# kubectl create ns argo
-namespace/argo created
+```bash
+npm i & npm start
 ```
 
-- Create the CRDs, workflow controller deployment with associated RBAC:
+> It’ll prompt you to start the development server at port `3001` or any other port than 3000 since it is already being used by the auth server, simply type `y` and the portal would be up and running in `localhost:3001` or `localhost:<PORT>`
 
+> NOTE: For the local development setup to work correctly, you will have to enable a CORS extension on your browser; you can find one here or use one of your own preference.
+
+Once you are able to see the Login Screen of Litmus use the following default credentials
+
+```bash
+Username: admin
+Password: litmus
 ```
-kubectl apply -f  https://raw.githubusercontent.com/argoproj/argo/stable/manifests/install.yaml -n argo
-
-customresourcedefinition.apiextensions.k8s.io/clusterworkflowtemplates.argoproj.io created
-customresourcedefinition.apiextensions.k8s.io/cronworkflows.argoproj.io created
-customresourcedefinition.apiextensions.k8s.io/workflows.argoproj.io created
-customresourcedefinition.apiextensions.k8s.io/workflowtemplates.argoproj.io created
-serviceaccount/argo created
-serviceaccount/argo-server created
-role.rbac.authorization.k8s.io/argo-role created
-clusterrole.rbac.authorization.k8s.io/argo-aggregate-to-admin configured
-clusterrole.rbac.authorization.k8s.io/argo-aggregate-to-edit configured
-clusterrole.rbac.authorization.k8s.io/argo-aggregate-to-view configured
-clusterrole.rbac.authorization.k8s.io/argo-cluster-role configured
-clusterrole.rbac.authorization.k8s.io/argo-server-cluster-role configured
-rolebinding.rbac.authorization.k8s.io/argo-binding created
-clusterrolebinding.rbac.authorization.k8s.io/argo-binding unchanged
-clusterrolebinding.rbac.authorization.k8s.io/argo-server-binding unchanged
-configmap/workflow-controller-configmap created
-service/argo-server created
-service/workflow-controller-metrics created
-deployment.apps/argo-server created
-deployment.apps/workflow-controller created
-```
-
-- Install the Argo CLI on the test harness machine (where the kubeconfig is available):
-
-```
-root@demo:~# curl -sLO https://github.com/argoproj/argo/releases/download/v2.8.0/argo-linux-amd64
-
-root@demo:~# chmod +x argo-linux-amd64
-
-root@demo:~# mv ./argo-linux-amd64 /usr/local/bin/argo
-
-root@demo:~# argo version
-argo: v2.8.0
-BuildDate: 2020-05-11T22:55:16Z
-GitCommit: 8f696174746ed01b9bf1941ad03da62d312df641
-GitTreeState: clean
-GitTag: v2.8.0
-GoVersion: go1.13.4
-Compiler: gc
-Platform: linux/amd64
-```
-
-### Install a Sample Application: Nginx
-
-- Install a simple multi-replica stateless Nginx deployment with service exposed over nodeport:
-
-```
-root@demo:~# kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/App/nginx.yaml
-
-deployment.extensions/nginx created
-root@demo:~# kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/App/service.yaml 
-service/nginx created
-```
-
-### Install Litmus Infrastructure
-
-- Apply the LitmusChaos Operator manifest:
-
-```
-kubectl apply -f https://litmuschaos.github.io/litmus/litmus-operator-v1.7.0.yaml
-```
-
-- Install the litmus-admin service account to be used by the chaos-operator while executing the experiment:
-
-```
-kubectl apply -f https://litmuschaos.github.io/litmus/litmus-admin-rbac.yaml
-```
-
-- Install the Chaos experiment of choice (in this example, we pick a pod-delete experiment):
-
-```
-kubectl apply -f https://hub.litmuschaos.io/api/chaos/master?file=charts/generic/pod-delete/experiment.yaml -n litmus
-```
-
-### Create the Argo Access ServiceAccount
-
-- Create the service account and associated RBAC, which will be used by the Argo workflow controller to execute the actions specified in the workflow. In our case, this corresponds to the launch of the Nginx benchmark job and creating the chaosengine to trigger the pod-delete chaos action. In our example, we place it in the namespace where the litmus chaos resources reside, i.e., litmus.
-
-```
-root@demo:~# kubectl apply -f https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argo-access.yaml -n litmus
-
-serviceaccount/argo-chaos created
-clusterrole.rbac.authorization.k8s.io/chaos-cluster-role created
-clusterrolebinding.rbac.authorization.k8s.io/chaos-cluster-role-binding created
-
-```
-
-### Create the Chaos Workflow
-
-Applying the workflow manifest performs the following actions in parallel:
-
-- Starts an Nginx benchmark job for the specified duration (300s)
-
-- Triggers a random pod-kill of the Nginx replica by creating the chaosengine CR. Cleans up after chaos.
-
-```
-root@demo:~# argo submit https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argowf-native-pod-delete.yaml -n litmus
-Name:                argowf-chaos-sl2cn
-Namespace:           litmus
-ServiceAccount:      argo-chaos
-Status:              Pending
-Created:             Fri May 15 15:31:45 +0000 (now)
-Parameters:
-  appNamespace:      default
-  adminModeNamespace: litmus
-  appLabel:          nginx
-```
-
-### Visualize the Chaos Workflow
-
-You can visualize the progress of the chaos workflow via the Argo UI. Convert the argo-server service to type NodePort & view the dashboard at: `https://<node-ip>:<nodeport>`
-
-```
-root@demo:~# kubectl patch svc argo-server -n argo -p '{"spec": {"type": "NodePort"}}'
-service/argo-server patched
-```
-![Argo visualisation](https://res.cloudinary.com/practicaldev/image/fetch/s--MkzlakSi--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://user-images.githubusercontent.com/21166217/82098260-38738b00-9722-11ea-81b4-b3c466a60080.png)
-
-### Get CLUSTER_ID & ACCESS_KEY
-
-After setting up the project name, user name, user email & Password:
-
-Press (Ctrl + Shift + I) to inspect, and switch to the console tab.
-
-Expand the next state object (any of the mentioned ones) and copy the selectedProjectID value
-
-Open localhost:8080 on your browser to access the GQL Playground and type in the below provided query & pass some dummy variables as shown below, with the exception of the “project_id” field which should be the same as the one you’ve just retrieved in the previous step
-
-Below you can see a reference implementation of the GQL Query passing, and the actual query below it:
-
-![GQL_1](https://user-images.githubusercontent.com/40641427/93286585-3b2bdd00-f7f5-11ea-9f1a-af36b3e837f4.png)
-
-```
-Query:
-mutation RegCluster($data: ClusterInput!){
-  userClusterReg(clusterInput: $data)
-}
-
-Query variables:
-{
-  "data": {
-    "cluster_name": "Helo",
-    "project_id": "<selectedProjectID>",
-    "description": "Cluster test",
-    "platform_name": "GKE",
-    "cluster_type":  "internal"
-  }
-}
-```
-
-You will get the JWT key on the side panel now.
-Open a browser window with the URL: `localhost:8080/file/<jwt_key>.yaml`
-
-### Retrieve the Cluster ID and key
-
-Scroll to the very bottom of this page and identify two fields: “CID” and “KEY”,
-Copy the strings in the “value” section of these respectively. The “value” string corresponding to the “CID” field will act as your local cluster ID for minikube from now on, it’s a good idea to save it’s value somewhere safe in your system for later usage.
-
-You can see the fields being referred above at the very bottom of the below provided screenshot as a reference:
-![C_ID_and_AccessKey](https://user-images.githubusercontent.com/40641427/93287087-44697980-f7f6-11ea-9f4b-1e43469a6b5f.png)
-
-
-### Confirm Cluster ID and Access Key pair
-
-Go back to the GraphQL playground at [http://localhost:8080/](http://localhost:8080/) and create a new tab
-enter the following query with the respective query variables.
-
-**NOTE: The “cluster_id” & “access_key” fields will have the strings you have retrieved above as “CID” and “KEY”  values respectively.**
-
-Reference Screenshot with the query have been provided below:
-
-![GQL_2](https://user-images.githubusercontent.com/40641427/93288671-10905300-f7fa-11ea-9ec7-954b1f7bb6e4.png)
-
-```
-Query:
-mutation ConfirmCluster($data: ClusterIdentity!){
-  clusterConfirm(identity: $data){
-    isClusterConfirmed
-    cluster_id
-    newClusterKey
-  }
-}
-Query Variables:
-{
-  "data": {
-    "cluster_id": "<Your CID value>",
-    "access_key": "<Your Key Value>"
-  }
-}
-```
-copy the “newClusterKey” string value. This will now be used to run your subscriber locally
-
-## Start Subscriber
-
-Create litmus namespace if it’s not created: 
-
-`kubectl create ns litmus`
-
-Change the present directory to the subscriber folder:
-
-`cd /litmus/litmus-portal/cluster-agents/subscriber`
-
-Enter the following command with your CLUSTER_ID = <cluster ID> string in field “cluster_id” and the ACCESS_KEY=<Access Key> as the string in the “newClusterKey” field.
-
-
-` AGENT_SCOPE="cluster" AGENT_NAMESPACE="litmus" CLUSTER_ID=<CLUSTER_ID> CLUSTER_ID=<ACCESS_KEY> SERVER_ADDR=http://localhost:8080/query go run subscriber.go -kubeconfig ~/.kube/config `
-
-## Generate workflow events:
-
-On a separate terminal instance to get the workflow event
-
-` argo submit https://raw.githubusercontent.com/litmuschaos/chaos-workflows/master/Argo/argowf-native-pod-delete.yaml -n litmus`
-
-The logs should show up in the workflow agent and also in the mongodb. If there’s a subscriber running for workflow events it should also receive these.
-
-Once it is done, you should be able to see your workflow on the local website UI in which we had logged on earlier.
+<img src="https://litmusdocs-beta.netlify.app/assets/images/login-53d18e01dbbc518c5e0fdd8ca5fb9500.png" />
