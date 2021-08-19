@@ -149,4 +149,4 @@ Once you are able to see the Login Screen of Litmus use the following default cr
 Username: admin
 Password: litmus
 ```
-<img src="https://litmusdocs-beta.netlify.app/assets/images/login-53d18e01dbbc518c5e0fdd8ca5fb9500.png" />
+<img src="https://i.ibb.co/yhgYLm1/login-75d67e34bdfa757d7647811731e2637a.png" />
