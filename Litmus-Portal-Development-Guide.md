@@ -6,7 +6,7 @@
 
 Here are a few things you need to make sure are already present in your system before running Litmus locally
 
-* Kubernetes 1.15 or higher
+* Kubernetes 1.17 or later
 * Helm3 or Kubectl
 * Node and npm
 * Docker
@@ -45,33 +45,32 @@ Once done, you’d be able to interact with your cluster and run kubectl command
 
 ### **Through Helm**
 
+* **Add the Litmus Helm repository**
+  ```bash
+  helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
+  helm repo list
+  ```
+
 * **Create a Litmus namespace**
   
   ```bash
   kubectl create ns litmus
   ```
 
-* **Add the Litmus Helm Chart**
-
-  ```bash
-  git clone https://github.com/litmuschaos/litmus-helm
-  cd litmus-helm
-  ```
-
-* **Install Litmus**
+* **Install Litmus ChaosCenter**
   
   ```bash
-  helm install litmuschaos --namespace litmus ./charts/litmus-2-0-0-beta/
+  helm install chaos litmuschaos/litmus --namespace=litmus
   ```
 
 > NOTE: To change the chart version to the latest CI for the local development setup, you can navigate to the `charts/litmus-2-0-0-beta/values.yml` and then modify all the type `tag` to have `ci` as the value.
 
 ### **Through Kubernetes Manifest**
 
-* **Applying the latest beta manifest**
+* **Applying the 2.0 manifest**
 
   ```bash
-  kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0-Beta/litmus-2.0.0-Beta.yaml
+  kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0/litmus-2.0.0.yaml
   ```
 
 * **Applying the master stable manifest**
