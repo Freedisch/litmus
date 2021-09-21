@@ -1,7 +1,7 @@
 ## Litmus 2.x 
 
 - Refer to the architecture overview section in [Litmus Docs](https://docs.litmuschaos.io/docs/architecture/overview/) 
-- A detailed video presentation is available in the []()
+- A detailed video presentation is available in the [Rawkode Live](https://www.youtube.com/watch?v=D0t3emVLLko)
 
 ## Litmus 1.x 
 
