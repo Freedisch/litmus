@@ -1,6 +1,7 @@
 ## Litmus 2.x 
 
-Refer to the architecture overview section in [Litmus Docs](https://docs.litmuschaos.io/docs/architecture/overview/)
+- Refer to the architecture overview section in [Litmus Docs](https://docs.litmuschaos.io/docs/architecture/overview/) 
+- A detailed video presentation is available in the []()
 
 ## Litmus 1.x 
 
