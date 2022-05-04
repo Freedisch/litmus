@@ -41,6 +41,196 @@ Once done, you’d be able to interact with your cluster and run kubectl command
 
 ***
 
+# **For Core Backend Development**
+
+## **Control Plane Backend**
+
+Backend components consist of three microservices
+
+1. GraphQL-Server
+2. Authentication-Server
+3. MongoDB
+
+## **Steps to run the Control Plane Backend**
+
+1. Install mongoDB on Kubernetes <br/>
+   a. Save the following file as mongo.yaml
+
+```yaml
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  selector:
+    matchLabels:
+      component: database
+  serviceName: mongo-headless-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: database
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: mongo
+          image: litmuschaos/mongo:4.2.8
+          securityContext:
+            allowPrivilegeEscalation: false
+          args: ["--ipv6"]
+          ports:
+            - containerPort: 27017
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+          resources:
+            requests:
+              memory: "550Mi"
+              cpu: "225m"
+              ephemeral-storage: "1Gi"
+            limits:
+              memory: "1Gi"
+              cpu: "750m"
+              ephemeral-storage: "3Gi"
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: litmus-portal-admin-secret
+                  key: DB_USER
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litmus-portal-admin-secret
+                  key: DB_PASSWORD
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongo
+  name: mongo-service
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    component: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongo
+  name: mongo-headless-service
+spec:
+  clusterIP: None
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    component: database
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: litmus-portal-admin-secret
+stringData:
+  DB_USER: "admin"
+  DB_PASSWORD: "1234"
+```
+
+   b. Apply the manifest and port-forward mongo-service
+   
+   ```bash
+   kubectl apply -f mongo.yaml -n default
+   kubectl port-forward svc/mongo-service 27017:27017 
+   ```
+
+   Or
+
+   ```bash
+   docker run -d -p 27017:27017 --name mongo-service litmuschaos/mongo:4.2.8
+   ```
+
+2. Run the Authentication Service <br />
+   a. Export the following environment variables
+
+   ```sh
+   export DB_SERVER=mongodb://localhost:27017
+   export JWT_SECRET=litmus-portal@123
+   export ADMIN_USERNAME=admin
+   export ADMIN_PASSWORD=litmus
+   export DB_USER=admin
+   export DB_PASSWORD=1234
+   ```
+
+   b. Run the go application
+   
+   ```bash
+   cd litmus-portal/authentication
+   go run api/main.go
+   ```
+
+3. Run the GraphQL Server <br />
+   a. Export the following environment variables
+
+   ```sh
+   export DB_SERVER=mongodb://localhost:27017
+   export JWT_SECRET=litmus-portal@123
+   export PORTAL_ENDPOINT=http://localhost:8080
+   export AGENT_SCOPE=cluster
+   export SELF_AGENT=true
+   export AGENT_NAMESPACE=litmus
+   export LITMUS_PORTAL_NAMESPACE=litmus
+   export PORTAL_SCOPE=namespace
+   export SUBSCRIBER_IMAGE=litmuschaos/litmusportal-subscriber:ci
+   export EVENT_TRACKER_IMAGE=litmuschaos/litmusportal-event-tracker:ci
+   export CONTAINER_RUNTIME_EXECUTOR=k8sapi
+   export ARGO_WORKFLOW_CONTROLLER_IMAGE=argoproj/workflow-controller:v3.2.9
+   export ARGO_WORKFLOW_CONTROLLER_IMAGE=argoproj/workflow-controller:v3.2.9
+   export ARGO_WORKFLOW_EXECUTOR_IMAGE=argoproj/argoexec:v3.2.9
+   export LITMUS_CHAOS_OPERATOR_IMAGE=litmuschaos/chaos-operator:2.7.0
+   export LITMUS_CHAOS_RUNNER_IMAGE=litmuschaos/chaos-runner:2.7.0
+   export LITMUS_CHAOS_EXPORTER_IMAGE=litmuschaos/chaos-exporter:2.7.0
+   export ADMIN_USERNAME=admin
+   export ADMIN_PASSWORD=litmus
+   export DB_USER=admin
+   export DB_PASSWORD=1234
+   export VERSION=ci
+   export HUB_BRANCH_NAME=v2.7.x
+   export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
+   ```
+
+   b. Run the go application
+
+   ```bash
+   cd litmus-portal/graphql-server
+   go run server.go
+   ```
+
+## **Steps to run the agent plane backend**
+
+Use [litmusctl](https://github.com/litmuschaos/litmusctl) on the same box/local cluster and connect a ns agent
+
+***
+
+# **For Frontend Development**
+
 ## **Install Litmus**
 
 ### **Through Helm**
@@ -67,10 +257,10 @@ Once done, you’d be able to interact with your cluster and run kubectl command
 
 ### **Through Kubernetes Manifest**
 
-* **Applying the 2.0 manifest**
+* **Applying the 2.8 manifest**
 
   ```bash
-  kubectl apply -f https://litmuschaos.github.io/litmus/2.0.0/litmus-2.0.0.yaml
+  kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/mkdocs/docs/2.8.0/litmus-2.8.0.yaml
   ```
 
 * **Applying the master stable manifest**
@@ -83,7 +273,7 @@ Once done, you’d be able to interact with your cluster and run kubectl command
 
 ## **Setup the Portal services locally**
 
-To set up and log in to Litmus Portal locally, expand the available services just created and look for the `litmusportal-server-service` service in the `litmus` namespace s since the server service contains GraphQL and Authentication required for the portal.
+To set up and log in to Litmus Portal locally, expand the available services just created in the `litmus` namespace since the server service contains GraphQL and Authentication required for the portal.
 
 ```bash
 kubectl get svc -n litmus
@@ -92,33 +282,60 @@ kubectl get svc -n litmus
 <span style="color:green">**Expected Output**</span>
 
 ```bash
-NAME                            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                         AGE
-chaos-litmus-portal-mongo       ClusterIP   10.104.107.117   <none>        27017/TCP                       2m
-litmusportal-frontend-service   NodePort    10.101.81.70     <none>        9091:30385/TCP                  2m
-litmusportal-server-service     NodePort    10.108.151.79    <none>        9002:32456/TCP,9003:31160/TCP   2m
+NAME                               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
+litmusportal-auth-server-service   NodePort    10.99.79.189    <none>        9003:32197/TCP,3030:32060/TCP   24s
+litmusportal-frontend-service      NodePort    10.110.66.146   <none>        9091:30230/TCP                  24s
+litmusportal-server-service        NodePort    10.108.178.98   <none>        9002:30523/TCP,8000:32662/TCP   24s
+mongo-headless-service             ClusterIP   None            <none>        27017/TCP                       24s
+mongo-service                      ClusterIP   10.107.168.37   <none>        27017/TCP                       24s
 ```
 
 Since this is your local setup and you won’t have the prediction environment backing you up, you’d need to configure authentication and GraphQL services manually for the application to simulate the ideal behaviour.
 
-## **To enable**
+## **Changes in `run.sh` file**
+
+In the `run.sh` file inside `litmus-portal` directory
+
+* comments out line 31-34 `Run script only in litmus portal dir` 
+* Update the `VERSION` value to `2.8.0` or relevant version, by default its set to `ci`
+* Update `SELF_CLUSTER` key to `SELF_AGENT`
+
+
+## **Forward these services**
+cd into the `litmus-portal` folder inside the cloned repo and use the respective setup to boot each service
+
+* **Mongo DB** (Only if backend services are to be run locally)
+
+  ```bash
+  kubectl port-forward svc/mongo-service 27017:27017 -n litmus
+  ```
+  > We’re using 27017 as our local Mongo DB server
 
 * **Authentication**
 
   ```bash
-  kubectl port-forward svc/litmusportal-server-service 3000:9003 -n litmus
+  kubectl port-forward svc/litmusportal-auth-server-service 3000:9003 -n litmus
   ```
-  > We’re using 3000 as our local authentication server
+  or
+  ```bash
+  bash run.sh auth (For local auth backend)
+  ```
+  > We’re using 3000 as our local and 9003 as our container authentication server
 
 * **GraphQL**
 
   ```bash
   kubectl port-forward svc/litmusportal-server-service 8080:9002 -n litmus
   ```
-  > We’re using 8080 as our local GraphQL server
+  or
+  ```bash
+  bash run.sh gql (For local GraphQL backend)
+  ```
+  > We’re using 8080 as our local and 9002 as our container GraphQL server
 
 ***
 
-## **Access the Portal locally**
+## **Access the Frontend locally**
 
 If you haven’t already cloned the litmus project do so from the `litmuschaos/litmus` repository
 
