@@ -10,6 +10,7 @@ Here are a few things you need to make sure are already present in your system b
 * Helm3 or Kubectl
 * Node and npm
 * Docker
+* Golang
 * Local Kubernetes Cluster (via minikube, k3s or kind)
 
 ## **Start your local Kubernetes cluster instance**
