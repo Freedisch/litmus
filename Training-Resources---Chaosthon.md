@@ -31,17 +31,20 @@ This page helps the participants of the Chaosthon in getting to know more about 
 It is now assumed that you have access to "Umasankar90499's project" on litmuschaos.cloud. When you are in this project, you will be doing actions as "Umasankar". It is important to keep the environment usable by other participants of Chaosthon. Do not delete the workflows that are not created by you.
 When you browse the project, you see a fully configured target environment. You will see chaos workflows that ran against an agent called "eks-common". You will be running a demo chaos workflow against an application called sock-shop catalog. 
 
-<br>
 ### Sample application details
 
 The sample is called sock-shop, which is installed in a namespace called "sock-shop" in a eks cluster, which is connected to your project through the eks-common agents. The details of the agents can be seen at the ChaosAgents section.
 
-* Sockshop application is setup at http://a5d3f939433a1425e8bed9f7cf632ed4-533721864.us-east-2.elb.amazonaws.com/category.html 
+* Sockshop application is setup at http://a5d3f939433a1425e8bed9f7cf632ed4-533721864.us-east-2.elb.amazonaws.com/category.html . This is a e-commerce application where various types of socks are sold. 
 * Catalog is a micro service that is accessible on this application
 ![image](https://user-images.githubusercontent.com/19591814/171152601-5796f26d-90d1-4de4-ba67-71a67f2fe86a.png)
 
+### Creating a pod-delete chaos on catalog service
 
-* Create a new chaos experiment against the catalog service
+You can create a new chaos workflow that deletes pod belonging to the catalog service. A pre-defined chaos workflow is made available for you in a ChaosHub called "Accenture-ChaosHub". Follow the below steps.
+
+1. Browse the catalog on the sock-sock website and see if it is working before chaos is applied.
+2. Create a new Chaos Workflow from Litmus Workflows tab.
 
 * Browse the catalog application when chaos is in play
 
