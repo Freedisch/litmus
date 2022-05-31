@@ -43,16 +43,73 @@ The sample is called sock-shop, which is installed in a namespace called "sock-s
 
 You can create a new chaos workflow that deletes pod belonging to the catalog service. A pre-defined chaos workflow is made available for you in a ChaosHub called "Accenture-ChaosHub". Follow the below steps.
 
-1. Browse the catalog on the sock-sock website and see if it is working before chaos is applied.
+1. Browse the [catalog](http://a5d3f939433a1425e8bed9f7cf632ed4-533721864.us-east-2.elb.amazonaws.com/category.html) on the sock-sock website and see if it is working before chaos is applied.
+
 2. Create a new Chaos Workflow from Litmus Workflows tab.
+![image](https://user-images.githubusercontent.com/19591814/171174523-0fe9e27e-84c0-4b4e-98ec-17b12168ca8e.png)
 
-* Browse the catalog application when chaos is in play
+3. Choose eks-common as the agent and click next
+![image](https://user-images.githubusercontent.com/19591814/171179449-ac405d9b-9c1d-438a-9d4d-4e1c72c93f4d.png)
 
-* Observe the results 
+4. Choose Accenture-ChaosHub in the list of chaos hubs.
+![image](https://user-images.githubusercontent.com/19591814/171179533-8b281c0c-eacc-4313-9403-0563d0d03b9c.png)
+
+5. Accenture-ChaosHub has two pre-defined chaos workflows. Choose accenture-demo1
+![image](https://user-images.githubusercontent.com/19591814/171179643-9132591c-d6d9-4e2d-ab0b-7bdac41898c9.png)
+
+6. Name the chaos workflow with something that contains your name, so that it can be identified. Many participants are sharing this environment. 
+![image](https://user-images.githubusercontent.com/19591814/171179820-e309b8a2-bd54-4a8b-989f-b351cd59be06.png)
+
+7. The experiment is setup for you already. If you wish browse the experiment and probe and learn how it is configured. Do NOT change any settings as the experiment is pre-configured to run against catalog service.
+![image](https://user-images.githubusercontent.com/19591814/171180068-f1885113-b669-48ff-8283-33208785cf33.png)
+
+8. Click next on the resilience score screen. There is only one experiment, no need to set weight.
+![image](https://user-images.githubusercontent.com/19591814/171180207-db8daecf-720e-4619-a9a5-9a3dd3b4f0cc.png)
+
+9. In the schedule screen, "Schedule now" is selected by default, click Next.
+![image](https://user-images.githubusercontent.com/19591814/171180339-04c43760-2048-48ed-b24d-e9b95ddefb8c.png)
+
+10. The final screen is a summary screen. Browse the YAML file to learn how the chaos workflow is constructed. Click Finish button.
+![image](https://user-images.githubusercontent.com/19591814/171180513-8bb55ccf-3b84-436f-884e-fae541c68cb7.png)
+
+11. Click Go to Workflow.
+![image](https://user-images.githubusercontent.com/19591814/171180603-5cc2a506-da04-44e3-844b-a35091717204.png)
+
+12. You will see that your chaos workflow is running and click on your workflow name to browse the running workflow.
+![image](https://user-images.githubusercontent.com/19591814/171180766-905be774-5c18-4e57-a395-a06a5dfb0311.png)
+
+13. The workflow starts with setting up the experiments environment before running the actual experiments. At this point of time your sock-shop catalog must be available. [Browse](http://a5d3f939433a1425e8bed9f7cf632ed4-533721864.us-east-2.elb.amazonaws.com/category.html) and check it is working. 
+![image](https://user-images.githubusercontent.com/19591814/171180901-4a083eff-1bd8-4609-9bab-9a03cad25f41.png)
+
+14. After a minute or so, pod-delete will start running. Few seconds into it, the catalog service may not be available, as there is no redundancy to that service. Till the pod is back up, the catalog service should remain unavailable. 
+![image](https://user-images.githubusercontent.com/19591814/171181313-aa8f755a-8dba-42d2-9d67-ef17e9948e01.png)
+
+15. Browse the catalog service and see it as unavailable. This means, that you are able to run the pod-delete chaos against the catalog service.
+![image](https://user-images.githubusercontent.com/19591814/171181521-ba5a13f1-3b92-4103-80e6-6fb1245c17f1.png)
+
+16. On the workflow browser, click on the pod-delete experiment to see the logs console.
+![image](https://user-images.githubusercontent.com/19591814/171181625-0daafd9f-cef7-44bf-ae0d-5e6567469fe3.png)
+
+17. Click on the Chaos Results tab to see the chaos workflow results.
+![image](https://user-images.githubusercontent.com/19591814/171181727-59eeb7dd-5456-4fe3-a614-3e620a0c919d.png)
+
+18. The workflow will run for a few minutes. When pod-delete chaos experiment is completed, the results can be seen in the Chaos Results tab. At the end Revent-Chaos step is run, this will run any chaos logs and results to keep the system at it's original state. Note that, after the revert chaos step, logs and results are not available as part of the workflow browser screen.
+
+![image](https://user-images.githubusercontent.com/19591814/171182176-2b080546-858d-42f5-b61c-c239fb7a8721.png)
+
+19. By now, the catalog pod must be back and [service](http://a5d3f939433a1425e8bed9f7cf632ed4-533721864.us-east-2.elb.amazonaws.com/category.html) must be available.
+
+This is the end of stage 2. Feel free to browse various features in the chaos center. The settings section provides various capabilities around teaming and GitOps.
+
+
+***
+
 
 ## Stage 3
-* Create a new chaos workflow against the same catalog experiment
+* Create a new chaos workflow against the same catalog experiment using the workflow wizard.
 In this case, we create a Pod Delete against front-end website or any other micro service in the sock-shop namespace.
+
+_More details are coming soon_
 
 
 
