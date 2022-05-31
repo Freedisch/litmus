@@ -102,6 +102,10 @@ You can create a new chaos workflow that deletes pod belonging to the catalog se
 This is the end of stage 2. Feel free to browse various features in the chaos center. The settings section provides various capabilities around teaming and GitOps.
 
 
+# Become part of the Litmus community
+* If you like the Litmus project, you may want to become one of the project stargazers on GitHub. Provide a star [here](https://github.com/litmuschaos/litmus/stargazers) if you like Litmus.
+* Join Litmus [slack channel](https://slack.litmuschaos.io) . Litmus community is at #litmus channel in Kubernetes slack workspace. 
+
 ***
 
 
