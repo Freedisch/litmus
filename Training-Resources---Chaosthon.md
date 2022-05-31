@@ -104,6 +104,8 @@ This is the end of stage 2. Feel free to browse various features in the chaos ce
 
 # Become part of the Litmus community
 * If you like the Litmus project, you may want to become one of the project stargazers on GitHub. Provide a star [here](https://github.com/litmuschaos/litmus/stargazers) if you like Litmus.
+![image](https://user-images.githubusercontent.com/19591814/171184697-ba45d206-4a9a-4554-859f-ba90297ed4bd.png)
+
 * Join Litmus [slack channel](https://slack.litmuschaos.io) . Litmus community is at #litmus channel in Kubernetes slack workspace. 
 
 ***
