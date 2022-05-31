@@ -13,17 +13,29 @@ This page helps the participants of the Chaosthon in getting to know more about 
 * Browse and learn around managing chaos workflows. Read the documentation at docs.litmuschaos.io
 
 
-
-
 **Join the ChaosThon project**
 
-Once you signup at litmuschaos.cloud, you will be invited to join a project. The invitation will be from umasankar.mukkara@harness.io. Once you accept that invitation, you will gain access to the new project.
+* Once you signup at litmuschaos.cloud, you will be invited to join a project. The invitation will be from umasankar.mukkara@harness.io. The invitation is visible on the top right of the Settings --> Teaming page.
 ![image](https://user-images.githubusercontent.com/19591814/171151503-5800d2a3-fc48-4a71-84f5-4da482e72fdc.png)
+
+* Click or scroll down on the teaming page to find the invitation. You must be invited as an editor. Accept the invitation.
+![image](https://user-images.githubusercontent.com/19591814/171163779-a6b6c6c0-1e12-45bc-994d-b52e90413e07.png)
+ 
+* Once the invitation is accepted, you will have access to the ChaosThon project on your project bar on your top left screen of the chaos center. Click on the project and select "Umasankar90499's project"
+![image](https://user-images.githubusercontent.com/19591814/171165922-a6aedcaa-1ee0-44ab-80bd-1e87d54b2b33.png)
+
 
 ***
 ## Stage 2
 
-* Access the demo application page
+It is now assumed that you have access to "Umasankar90499's project" on litmuschaos.cloud. When you are in this project, you will be doing actions as "Umasankar". It is important to keep the environment usable by other participants of Chaosthon. Do not delete the workflows that are not created by you.
+When you browse the project, you see a fully configured target environment. You will see chaos workflows that ran against an agent called "eks-common". You will be running a demo chaos workflow against an application called sock-shop catalog. 
+
+<br>
+### Sample application details
+
+The sample is called sock-shop, which is installed in a namespace called "sock-shop" in a eks cluster, which is connected to your project through the eks-common agents. The details of the agents can be seen at the ChaosAgents section.
+
 * Sockshop application is setup at http://a5d3f939433a1425e8bed9f7cf632ed4-533721864.us-east-2.elb.amazonaws.com/category.html 
 * Catalog is a micro service that is accessible on this application
 ![image](https://user-images.githubusercontent.com/19591814/171152601-5796f26d-90d1-4de4-ba67-71a67f2fe86a.png)
