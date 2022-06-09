@@ -185,7 +185,7 @@ git clone https://github.com/litmuschaos/litmus.git litmus --depth 1
    export JWT_SECRET=litmus-portal@123
    export PORTAL_ENDPOINT=http://localhost:8080
    export AGENT_SCOPE=cluster
-   export SELF_AGENT=true
+   export SELF_AGENT=false
    export AGENT_NAMESPACE=litmus
    export LITMUS_PORTAL_NAMESPACE=litmus
    export PORTAL_SCOPE=namespace
