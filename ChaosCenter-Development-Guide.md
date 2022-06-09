@@ -54,7 +54,7 @@ Backend components consist of three microservices
 
 ## **Steps to run the Control Plane Backend**
 
-1. Install mongoDB on Kubernetes <br/>
+### 1. Install mongoDB on Kubernetes <br/>
    a. Save the following file as mongo.yaml
 
 ```yaml
@@ -162,13 +162,25 @@ stringData:
    kubectl port-forward svc/mongo-service 27017:27017 
    ```
 
-   Or
+   ### Or, Install mongo on Docker
+
+   a) Apply the following docker command to run the container
 
    ```bash
    docker run -d -p 27017:27017 --name mongo-service litmuschaos/mongo:4.2.8
    ```
+   
+   b) Create a mongo user and password eg(default): admin/1234 
 
-2. Run the Authentication Service <br />
+   ```bash
+   docker exec -ti mongo-service bash
+   mongo
+   use admin
+   db.createUser({ user: "admin" , pwd: "1234", roles: ["userAdminAnyDatabase", "dbAdminAnyDatabase", "readWriteAnyDatabase"]})
+   ```
+
+
+### 2. Run the Authentication Service <br />
    a. Export the following environment variables
 
    ```sh
@@ -187,7 +199,7 @@ stringData:
    go run api/main.go
    ```
 
-3. Run the GraphQL Server <br />
+### 3. Run the GraphQL Server <br />
    a. Export the following environment variables
 
    ```sh
