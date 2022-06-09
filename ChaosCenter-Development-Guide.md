@@ -13,33 +13,6 @@ Here are a few things you need to make sure are already present in your system b
 * Golang
 * Local Kubernetes Cluster (via minikube, k3s or kind)
 
-## **Start your local Kubernetes cluster instance**
-
-From a terminal with administrator access, run:
-
-```bash
-minikube start
-```
-
-<span style="color:green">**Expected Output**</span>
-
-```bash
-😄  minikube v1.12.1 on Ubuntu 20.04
-🎉  minikube 1.18.1 is available! Download it: https://github.com/kubernetes/minikube/releases/tag/v1.18.1
-💡  To disable this notice, run: 'minikube config set WantUpdateNotification false'
-
-✨  Using the docker driver based on existing profile
-👍  Starting control plane node minikube in cluster minikube
-🏃  Updating the running docker "minikube" container ...
-🐳  Preparing Kubernetes v1.18.3 on Docker 19.03.2 ...
-🔎  Verifying Kubernetes components...
-🌟  Enabled addons: default-storageclass, storage-provisioner
-🏄  Done! kubectl is now configured to use "minikube"
-```
-
-Once done, you’d be able to interact with your cluster and run kubectl commands
-> *Initially, some services such as the storage-provisioner, may not yet be in a Running state. This is a normal condition during cluster bring-up and will resolve itself momentarily.*
-
 ***
 
 # **For Core Backend Development**
@@ -181,6 +154,11 @@ stringData:
 
 
 ### 2. Run the Authentication Service <br />
+   > NOTE: Make sure to run backend services before the frontend. If you haven’t already cloned the litmus project do so from the `litmuschaos/litmus` repository
+```bash
+git clone https://github.com/litmuschaos/litmus.git litmus --depth 1
+```
+
    a. Export the following environment variables
 
    ```sh
@@ -243,118 +221,14 @@ Use [litmusctl](https://github.com/litmuschaos/litmusctl) on the same box/local 
 
 ***
 
-# **For Frontend Development**
+## **Run Frontend locally**
 
-## **Install Litmus**
-
-### **Through Helm**
-
-* **Add the Litmus Helm repository**
-  ```bash
-  helm repo add litmuschaos https://litmuschaos.github.io/litmus-helm/
-  helm repo list
-  ```
-
-* **Create a Litmus namespace**
-  
-  ```bash
-  kubectl create ns litmus
-  ```
-
-* **Install Litmus ChaosCenter**
-  
-  ```bash
-  helm install chaos litmuschaos/litmus --namespace=litmus
-  ```
-
-> NOTE: To change the chart version to the latest CI for the local development setup, you can navigate to the `charts/litmus-2-0-0-beta/values.yml` and then modify all the type `tag` to have `ci` as the value.
-
-### **Through Kubernetes Manifest**
-
-* **Applying the 2.8 manifest**
-
-  ```bash
-  kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/2.8.0/mkdocs/docs/2.8.0/litmus-2.8.0.yaml
-  ```
-
-* **Applying the master stable manifest**
-
-  ```bash
-  kubectl apply -f https://raw.githubusercontent.com/litmuschaos/litmus/master/litmus-portal/cluster-k8s-manifest.yml
-  ```
-
-***
-
-## **Setup the Portal services locally**
-
-To set up and log in to Litmus Portal locally, expand the available services just created in the `litmus` namespace since the server service contains GraphQL and Authentication required for the portal.
-
-```bash
-kubectl get svc -n litmus
-```
-
-<span style="color:green">**Expected Output**</span>
-
-```bash
-NAME                               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
-litmusportal-auth-server-service   NodePort    10.99.79.189    <none>        9003:32197/TCP,3030:32060/TCP   24s
-litmusportal-frontend-service      NodePort    10.110.66.146   <none>        9091:30230/TCP                  24s
-litmusportal-server-service        NodePort    10.108.178.98   <none>        9002:30523/TCP,8000:32662/TCP   24s
-mongo-headless-service             ClusterIP   None            <none>        27017/TCP                       24s
-mongo-service                      ClusterIP   10.107.168.37   <none>        27017/TCP                       24s
-```
-
-Since this is your local setup and you won’t have the prediction environment backing you up, you’d need to configure authentication and GraphQL services manually for the application to simulate the ideal behaviour.
-
-## **Changes in `run.sh` file**
-
-In the `run.sh` file inside `litmus-portal` directory
-
-* comments out line 31-34 `Run script only in litmus portal dir` 
-* Update the `VERSION` value to `2.8.0` or relevant version, by default its set to `ci`
-* Update `SELF_CLUSTER` key to `SELF_AGENT`
-
-
-## **Forward these services**
-cd into the `litmus-portal` folder inside the cloned repo and use the respective setup to boot each service
-
-* **Mongo DB** (Only if backend services are to be run locally)
-
-  ```bash
-  kubectl port-forward svc/mongo-service 27017:27017 -n litmus
-  ```
-  > We’re using 27017 as our local Mongo DB server
-
-* **Authentication**
-
-  ```bash
-  kubectl port-forward svc/litmusportal-auth-server-service 3000:9003 -n litmus
-  ```
-  or
-  ```bash
-  bash run.sh auth (For local auth backend)
-  ```
-  > We’re using 3000 as our local and 9003 as our container authentication server
-
-* **GraphQL**
-
-  ```bash
-  kubectl port-forward svc/litmusportal-server-service 8080:9002 -n litmus
-  ```
-  or
-  ```bash
-  bash run.sh gql (For local GraphQL backend)
-  ```
-  > We’re using 8080 as our local and 9002 as our container GraphQL server
-
-***
-
-## **Access the Frontend locally**
+> NOTE: Make sure to run backend services before the frontend.
 
 If you haven’t already cloned the litmus project do so from the `litmuschaos/litmus` repository
 
 ```bash
-git clone https://github.com/litmuschaos/litmus.git litmus
+git clone https://github.com/litmuschaos/litmus.git litmus --depth 1
 ```
 
 Once cloned, navigate to the frontend directory inside the `litmus-portal` folder
