@@ -215,6 +215,7 @@ stringData:
    export VERSION=ci
    export HUB_BRANCH_NAME=v2.7.x
    export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
+   export LITMUS_CORE_VERSION="2.7.0"
    ```
 
    b. Run the go application
