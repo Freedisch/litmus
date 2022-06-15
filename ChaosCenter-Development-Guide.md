@@ -183,8 +183,8 @@ git clone https://github.com/litmuschaos/litmus.git litmus --depth 1
    ```sh
    export DB_SERVER=mongodb://localhost:27017
    export JWT_SECRET=litmus-portal@123
-   export PORTAL_ENDPOINT=http://localhost:8080
-   export AGENT_SCOPE=cluster
+   export CHAOS_CENTER_UI_ENDPOINT=http://localhost:8080
+   export CHAOS_CENTER_SCOPE=cluster
    export SELF_AGENT=false
    export AGENT_NAMESPACE=litmus
    export LITMUS_PORTAL_NAMESPACE=litmus
