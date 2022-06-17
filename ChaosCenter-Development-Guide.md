@@ -180,7 +180,7 @@ git clone https://github.com/litmuschaos/litmus.git litmus --depth 1
 ### 3. Run the GraphQL Server <br />
    a. Export the following environment variables
 
-   ```sh
+   ```bash
    export DB_SERVER=mongodb://localhost:27017
    export JWT_SECRET=litmus-portal@123
    export CHAOS_CENTER_UI_ENDPOINT=http://localhost:8080
@@ -205,7 +205,7 @@ git clone https://github.com/litmuschaos/litmus.git litmus --depth 1
    export VERSION=ci
    export HUB_BRANCH_NAME=v2.7.x
    export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
-   export LITMUS_CORE_VERSION="2.7.0"
+   export WORKFLOW_HELPER_IMAGE_VERSION ="2.7.0"
    ```
 
    b. Run the go application
