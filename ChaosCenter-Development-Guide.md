@@ -188,7 +188,7 @@ git clone https://github.com/litmuschaos/litmus.git litmus --depth 1
    export SELF_AGENT=false
    export AGENT_NAMESPACE=litmus
    export LITMUS_PORTAL_NAMESPACE=litmus
-   export PORTAL_SCOPE=namespace
+   export AGENT_SCOPE=namespace
    export SUBSCRIBER_IMAGE=litmuschaos/litmusportal-subscriber:ci
    export EVENT_TRACKER_IMAGE=litmuschaos/litmusportal-event-tracker:ci
    export CONTAINER_RUNTIME_EXECUTOR=k8sapi
@@ -205,7 +205,7 @@ git clone https://github.com/litmuschaos/litmus.git litmus --depth 1
    export VERSION=ci
    export HUB_BRANCH_NAME=v2.7.x
    export AGENT_DEPLOYMENTS="[\"app=chaos-exporter\", \"name=chaos-operator\", \"app=event-tracker\", \"app=workflow-controller\"]"
-   export WORKFLOW_HELPER_IMAGE_VERSION ="2.7.0"
+   export WORKFLOW_HELPER_IMAGE_VERSION="2.7.0"
    ```
 
    b. Run the go application
