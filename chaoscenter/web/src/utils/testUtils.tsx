@@ -6,6 +6,7 @@ import { StringsContext } from '@strings';
 import strings from 'strings/strings.en.yaml';
 import '../bootstrap.scss';
 import { AppStoreContext } from '@context';
+import { LitmusAPIProvider } from '@api/LitmusAPIProvider';
 
 interface TestWrapperProps {
   children: React.ReactElement;
@@ -16,6 +17,7 @@ export const findPopoverContainer = (): HTMLElement | null => document.querySele
 
 export function TestWrapper({ children }: TestWrapperProps): React.ReactElement {
   const getString = (key: string): string => key;
+  const getAPIEndpoints = ()
 
   return (
     <BrowserRouter>
@@ -33,7 +35,19 @@ export function TestWrapper({ children }: TestWrapperProps): React.ReactElement 
           updateAppStore: () => void 0
         }}
       >
-        <StringsContext.Provider value={{ data: strings as any, getString }}>{children}</StringsContext.Provider>
+        <StringsContext.Provider value={{ data: strings as any, getString }}>
+          <LitmusAPIProvider config={{
+            gqlEndpoints: {
+              chaosManagerUri: `$api/query`
+            },
+            restEndpoints: {
+              authUri: `/auth`,
+              chaosManagerUri: `/api`
+            }
+          }}>
+            {children}
+          </LitmusAPIProvider>
+        </StringsContext.Provider>
       </AppStoreContext.Provider>
     </BrowserRouter>
   );
