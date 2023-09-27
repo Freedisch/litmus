@@ -1,0 +1,22 @@
+mode: set
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:17.78,19.16 2 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:19.16,21.3 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:22.2,26.16 4 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:26.16,28.3 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:29.2,29.66 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:33.86,36.16 2 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:36.16,39.3 2 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:42.2,44.41 2 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:44.41,46.3 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:48.2,51.38 3 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:51.38,53.3 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:55.2,58.41 2 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:58.41,66.3 7 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:68.2,68.16 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:68.16,70.3 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:72.2,79.8 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:83.80,85.16 2 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:85.16,88.3 2 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:89.2,90.31 2 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:90.31,92.3 1 0
+github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc/grpc_handler.go:93.2,102.8 1 0
