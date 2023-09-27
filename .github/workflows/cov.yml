@@ -29,6 +29,7 @@ jobs:
         shell: bash
         run: |
           cd chaoscenter/authentication
+          go mod tidy
           go test -coverprofile cover.out ./...
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
