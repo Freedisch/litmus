@@ -33,7 +33,7 @@ jobs:
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: ./litmus-portal/graphql-server/cover.out
+          file: ./chaoscenter/authentication/cover.out
           verbose: true
           flags: unittests
           fail_ci_if_error: true
