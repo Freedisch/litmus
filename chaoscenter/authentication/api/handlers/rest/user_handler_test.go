@@ -193,7 +193,7 @@ func TestResetPassword(t *testing.T){
 	// when
 	rest.ResetPassword(*service)(ctx)
 	// then
-	assert.Equal(t, 401, w.Code)
+	assert.Equal(t, 400, w.Code)
 }
 
 func TestUpdateUserState(t *testing.T){
