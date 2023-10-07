@@ -3,7 +3,6 @@ package rest_test
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,8 +13,8 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/rest"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/stretchr/testify/assert"
@@ -170,34 +169,44 @@ func TestUpdatePassword(t *testing.T){
 	assert.Equal(t, 401, w.Code)
 }
 
-func TestResetPassword(t *testing.T){
-	// given
-	w := httptest.NewRecorder()
-	ctx := GetTestGinContext(w)
-	ctx.Set("role", "admin")
-	request := entities.UserPassword{
-		Username: uuid.NewString(),
-		OldPassword: uuid.NewString(),
-		NewPassword: uuid.NewString(),
+
+
+func TestResetPassword_Success(t *testing.T) {
+	// Set up Gin engine for testing
+	gin.SetMode(gin.TestMode)
+
+	// Mock service methods
+	service := new(mocks.MockedApplicationService)
+	service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
+	service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
+
+	// Create a request with valid JSON payload for UserPassword
+	userPass := &entities.UserPassword{
+		Username:    "testUser",
+		OldPassword: "",
+		NewPassword: "validPassword123",
 	}
+	bodyBytes, _ := json.Marshal(userPass)
 
-	jsonBytes, _ := json.Marshal(request)
+	// Mock context values
+	w := httptest.NewRecorder()
+	c := GetTestGinContext(w)
+	c.Request.Method = http.MethodPost
+	c.Request.Body = ioutil.NopCloser(bytes.NewReader(bodyBytes))
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("role", "admin")
+	c.Set("uid", "testUID")
+	c.Set("username", "adminUser")
 
-    // Set the request body to the mock user password request
-    ctx.Request.Body = ioutil.NopCloser(bytes.NewReader(jsonBytes))
-	service := new(services.ApplicationService)
-	//var result entities.UserPassword
-    err := ctx.BindJSON(&request)
-    if err != nil {
-        t.Fatal(err)
-		fmt.Printf("error got %v", err)
-    }
-	// when
-	rest.ResetPassword(*service)(ctx)
-	// then
-	assert.Equal(t, 400, w.Code)
+	// Use the handler function directly to serve the request
+	rest.ResetPassword(service)(c)
+
+	// Check the response
+	assert.Equal(t, http.StatusOK, w.Code)
+	var response map[string]string
+	json.Unmarshal(w.Body.Bytes(), &response)
+	assert.Equal(t, "password has been reset successfully", response["message"])
 }
-
 func TestUpdateUserState(t *testing.T){
 	// given
 	w := httptest.NewRecorder()
