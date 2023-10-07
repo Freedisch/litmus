@@ -3,6 +3,7 @@ package rest_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -174,7 +175,7 @@ func TestResetPassword(t *testing.T){
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	ctx.Set("role", "admin")
-	request := &entities.UserPassword{
+	request := entities.UserPassword{
 		Username: uuid.NewString(),
 		OldPassword: uuid.NewString(),
 		NewPassword: uuid.NewString(),
@@ -185,10 +186,11 @@ func TestResetPassword(t *testing.T){
     // Set the request body to the mock user password request
     ctx.Request.Body = ioutil.NopCloser(bytes.NewReader(jsonBytes))
 	service := new(services.ApplicationService)
-	var result entities.UserPassword
-    err := ctx.BindJSON(&result)
+	//var result entities.UserPassword
+    err := ctx.BindJSON(&request)
     if err != nil {
         t.Fatal(err)
+		fmt.Printf("error got %v", err)
     }
 	// when
 	rest.ResetPassword(*service)(ctx)
