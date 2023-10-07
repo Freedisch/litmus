@@ -173,7 +173,7 @@ func TestResetPassword(t *testing.T){
 	// given
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
-	ctx.Set("role", "user")
+	ctx.Set("role", "admin")
 	request := &entities.UserPassword{
 		Username: uuid.NewString(),
 		OldPassword: uuid.NewString(),
