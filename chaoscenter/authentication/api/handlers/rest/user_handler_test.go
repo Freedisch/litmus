@@ -17,6 +17,7 @@ import (
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -207,6 +208,87 @@ func TestResetPassword_Success(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &response)
 	assert.Equal(t, "password has been reset successfully", response["message"])
 }
+
+func TestResetPassword(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name          string
+		inputBody     string
+		mockRole      string
+		mockUID       string
+		mockUsername  string
+		mockService   func()
+		expectedCode  int
+	}{
+		{
+			name:         "Non-admin role",
+			inputBody:    `{"Username": "john", "NewPassword": "password123"}`,
+			mockRole:     "user",
+			mockUID:      "testUID",
+			mockUsername: "user",
+			expectedCode: utils.ErrorStatusCodes[utils.ErrUnauthorized],
+		},
+		{
+			name:         "Invalid Request Body",
+			inputBody:    `{"invalid}`,
+			mockRole:     "admin",
+			mockUID:      "testUID",
+			mockUsername: "adminUser",
+			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
+		},
+		// {
+		// 	name:         "Strict Password Policy Violation",
+		// 	inputBody:    `{"Username": "john", "NewPassword": "short"}`,
+		// 	mockRole:     "admin",
+		// 	mockUID:      "testUID",
+		// 	mockUsername: "adminUser",
+		// 	expectedCode: utils.ErrorStatusCodes[utils.ErrStrictPasswordPolicyViolation],
+		// },
+		{
+			name:         "Empty Username or Password",
+			inputBody:    `{"Username": "", "NewPassword": ""}`,
+			mockRole:     "admin",
+			mockUID:      "testUID",
+			mockUsername: "adminUser",
+			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
+		},
+		{
+			name:         "Non-administrator user attempting to change password",
+			inputBody:    `{"Username": "john", "NewPassword": "password123"}`,
+			mockRole:     "user",
+			mockUID:      "testUID",
+			mockUsername: "john",
+			mockService: func() {
+				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
+			},
+			expectedCode: utils.ErrorStatusCodes[utils.ErrUnauthorized],
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.mockService != nil {
+				tt.mockService()
+			}
+			service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
+			service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
+			w := httptest.NewRecorder()
+			c := GetTestGinContext(w)
+			c.Request.Method = http.MethodPost
+			c.Request.Body = ioutil.NopCloser(bytes.NewReader([]byte(tt.inputBody)))
+			c.Set("role", tt.mockRole)
+			c.Set("uid", tt.mockUID)
+			c.Set("username", tt.mockUsername)
+
+			rest.ResetPassword(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+		})
+	}
+}
+
 func TestUpdateUserState(t *testing.T){
 	// given
 	w := httptest.NewRecorder()
