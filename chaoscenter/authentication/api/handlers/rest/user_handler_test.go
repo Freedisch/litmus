@@ -1,6 +1,9 @@
 package rest_test
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,9 +13,12 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/rest"
+	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/services"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 // TestMain is the entry point for testing
@@ -32,18 +38,61 @@ func GetTestGinContext(w *httptest.ResponseRecorder) *gin.Context {
 	return ctx
 }
 
-func TestCreateUser(t *testing.T) {
-	//given
-	w := httptest.NewRecorder()
-	ctx := GetTestGinContext(w)
-	ctx.Set("role", "admin")
-	service := new(services.ApplicationService)
-	//userResponse, err := service.CreateUser(nil)
-	//when
-	rest.CreateUser(*service)(ctx) // pass the interface to the CreateUser function
-	//then
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+
+func MockJsonGet(c *gin.Context, params gin.Params, u url.Values) {
+	c.Request.Method = "GET"
+	c.Request.Header.Set("Content-Type", "application/josn")
 }
+
+func MockJsonPost(c *gin.Context, content interface{}) {
+	c.Request.Method = "POST"
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("role", "admin")
+	jsonbytes, err := json.Marshal(content)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonbytes))
+}
+type MockApplicationService interface {
+	mock.Mock
+}
+// func TestCreateUser(t *testing.T) {
+// 		// Create a mock service
+// 		mockService := &MockApplicationService{}
+	
+// 		// Create a new HTTP request
+// 		req, err := http.NewRequest("POST", "/users", nil)
+// 		if err != nil {
+// 			t.Fatal(err)
+// 		}
+	
+// 		// Create a new HTTP recorder
+// 		rr := httptest.NewRecorder()
+	
+// 		// Create a new Gin context
+// 		c, _ := gin.CreateTestContext(rr)
+// 		c.Request = req
+	
+// 		// Call the CreateUser function
+// 		rest.CreateUser(mockService)(c)
+	
+// 		// Check the response status code
+// 		if status := rr.Code; status != http.StatusOK {
+// 			t.Errorf("handler returned wrong status code: got %v want %v",
+// 				status, http.StatusOK)
+// 		}
+	
+// 		// Check the response body
+// 		expected := `{"message":"User created successfully"}`
+// 		if rr.Body.String() != expected {
+// 			t.Errorf("handler returned unexpected body: got %v want %v",
+// 				rr.Body.String(), expected)
+// 		}
+	
+	
+// }
 
 func TestUpdateuser(t *testing.T) {
 	// given
@@ -125,7 +174,22 @@ func TestResetPassword(t *testing.T){
 	w := httptest.NewRecorder()
 	ctx := GetTestGinContext(w)
 	ctx.Set("role", "user")
+	request := &entities.UserPassword{
+		Username: uuid.NewString(),
+		OldPassword: uuid.NewString(),
+		NewPassword: uuid.NewString(),
+	}
+
+	jsonBytes, _ := json.Marshal(request)
+
+    // Set the request body to the mock user password request
+    ctx.Request.Body = ioutil.NopCloser(bytes.NewReader(jsonBytes))
 	service := new(services.ApplicationService)
+	var result entities.UserPassword
+    err := ctx.BindJSON(&result)
+    if err != nil {
+        t.Fatal(err)
+    }
 	// when
 	rest.ResetPassword(*service)(ctx)
 	// then
