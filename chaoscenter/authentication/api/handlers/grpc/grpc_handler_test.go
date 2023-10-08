@@ -58,7 +58,7 @@ type MockApplicationService struct {
 	mock.Mock
 }
 
-func TestGetProjectById_Success(t *testing.T) {
+func TestGetProjectById(t *testing.T) {
 	s := &grpc.ServerGrpc{
 		ApplicationService: &mocks.MockedApplicationService{},
 	}
@@ -71,7 +71,7 @@ func TestGetProjectById_Success(t *testing.T) {
 		Members: []*entities.Member{
 			{
 				UserID:    "user-1",
-				Invitation: entities.PendingInvitation,  // adjust to your actual type
+				Invitation: entities.PendingInvitation,
 				JoinedAt:  1234567890,
 			},
 		},
@@ -97,4 +97,37 @@ func TestGetProjectById_Success(t *testing.T) {
 	assert.NotNil(t, resp)
 	assert.Equal(t, "test-project", resp.Name)
 	assert.Equal(t, "user1@email.com", resp.Members[0].Email)
+}
+
+func TestGetUserById(t *testing.T) {
+	s := &grpc.ServerGrpc{
+		ApplicationService: &mocks.MockedApplicationService{},
+	}
+
+	deactivatedTimestamp := int64(1234567892)
+
+	// Mocking ApplicationService methods
+	mockService := s.ApplicationService.(*mocks.MockedApplicationService)
+	mockService.On("GetUser", "user-id").Return(&entities.User{
+		ID:           "user-id",
+		Name:         "test-user",
+		Username:     "username",
+		DeactivatedAt: &deactivatedTimestamp,
+		Role:         "admin", // adjust to your actual type
+		Email:        "user@email.com",
+	}, nil)
+
+	req := &protos.GetUserByIdRequest{
+		UserID: "user-id",
+	}
+
+	ctx := context.Background()
+
+	resp, err := s.GetUserById(ctx, req)
+
+	// Assertions
+	assert.Nil(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, "test-user", resp.Name)
+	assert.Equal(t, "user@email.com", resp.Email)
 }
