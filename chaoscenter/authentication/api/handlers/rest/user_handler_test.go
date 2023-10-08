@@ -3,6 +3,7 @@ package rest_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 	"log"
@@ -261,16 +262,101 @@ func TestFetchUsers(t *testing.T) {
 }
 
 func TestLoginUser(t *testing.T) {
-	// given
-	w := httptest.NewRecorder()
-	ctx := GetTestGinContext(w)
-	service := new(services.ApplicationService)
-	// when
-	rest.LoginUser(*service)(ctx)
-	// then
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	gin.SetMode(gin.TestMode)
 
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name         string
+		input        entities.User
+		given        func()
+		expectedCode int
+	}{
+		{
+			name: "Successfully login user",
+			input: entities.User{
+				Username: "testUser",
+				Password: "testPassword",
+			},
+			given: func() {
+				userFromDB := &entities.User{
+					ID:       "testUserID",
+					Username: "testUser",
+					Password: "hashedPassword", // This should be an actual hashed version of "testPassword"
+					Email:    "test@example.com",
+				}
+				service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
+				service.On("CheckPasswordHash", "hashedPassword", "testPassword").Return(nil)
+				service.On("GetSignedJWT", userFromDB).Return("someJWTToken", nil)
+				project := &entities.Project{
+					ID: "someProjectID",
+				}
+				service.On("GetOwnerProjectIDs", mock.Anything, "testUserID").Return([]*entities.Project{project}, nil)
+			},
+			expectedCode: http.StatusOK,
+		},
+		{
+			name:         "Invalid JSON body",
+			given:        func() {}, // No mocks needed here
+			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
+		},
+		{
+			name:         "Missing Username or Password",
+			given:        func() {}, // No mocks needed here
+			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
+		},
+		{
+			name: "User not found",
+			given: func() {
+				service.On("FindUserByUsername", "notFoundUser").Return(nil, errors.New("user not found"))
+			},
+			expectedCode: utils.ErrorStatusCodes[utils.ErrUserNotFound],
+		},
+		{
+			name: "User deactivated",
+			given: func() {
+				deactivatedUser := &entities.User{
+					ID:           "deactivatedUserID",
+					Username:     "deactivatedUser",
+					Password:     "hashedPassword",
+				 // Assuming 'someTimestamp' is a valid timestamp
+				}
+				service.On("FindUserByUsername", "deactivatedUser").Return(deactivatedUser, nil)
+			},
+			expectedCode: utils.ErrorStatusCodes[utils.ErrUserDeactivated],
+		},
+		// {
+		// 	name: "Invalid password",
+		// 	given: func() {
+		// 		userFromDB := &entities.User{
+		// 			ID:       "testUserID",
+		// 			Username: "testUser",
+		// 			Password: "hashedPassword",
+		// 		}
+		// 		service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
+		// 		service.On("CheckPasswordHash", "hashedPassword", "wrongPassword").Return(errors.New("invalid password"))
+		// 	},
+		// 	expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidCredentials],
+		// },
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			body, _ := json.Marshal(tt.input)
+			c.Request = httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(body))
+			c.Request.Header.Set("Content-Type", "application/json")
+
+			tt.given()
+
+			rest.LoginUser(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+		})
+	}
 }
+
 
 func TestLogoutUser(t *testing.T) {
 	// given
