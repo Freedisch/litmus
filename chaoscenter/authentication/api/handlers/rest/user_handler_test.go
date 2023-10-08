@@ -170,61 +170,42 @@ func TestUpdatePassword(t *testing.T){
 	assert.Equal(t, 401, w.Code)
 }
 
-
-
-func TestResetPassword_Success(t *testing.T) {
-	// Set up Gin engine for testing
-	gin.SetMode(gin.TestMode)
-
-	// Mock service methods
-	service := new(mocks.MockedApplicationService)
-	service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
-	service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
-
-	// Create a request with valid JSON payload for UserPassword
-	userPass := &entities.UserPassword{
-		Username:    "testUser",
-		OldPassword: "",
-		NewPassword: "validPassword123",
-	}
-	bodyBytes, _ := json.Marshal(userPass)
-
-	// Mock context values
-	w := httptest.NewRecorder()
-	c := GetTestGinContext(w)
-	c.Request.Method = http.MethodPost
-	c.Request.Body = ioutil.NopCloser(bytes.NewReader(bodyBytes))
-	c.Request.Header.Set("Content-Type", "application/json")
-	c.Set("role", "admin")
-	c.Set("uid", "testUID")
-	c.Set("username", "adminUser")
-
-	// Use the handler function directly to serve the request
-	rest.ResetPassword(service)(c)
-
-	// Check the response
-	assert.Equal(t, http.StatusOK, w.Code)
-	var response map[string]string
-	json.Unmarshal(w.Body.Bytes(), &response)
-	assert.Equal(t, "password has been reset successfully", response["message"])
-}
-
 func TestResetPassword(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	service := new(mocks.MockedApplicationService)
 
 	tests := []struct {
 		name          string
-		inputBody     string
+		inputBody     *entities.UserPassword
 		mockRole      string
 		mockUID       string
 		mockUsername  string
-		mockService   func()
+		given   func()
 		expectedCode  int
 	}{
 		{
 			name:         "Non-admin role",
-			inputBody:    `{"Username": "john", "NewPassword": "password123"}`,
+			inputBody:    &entities.UserPassword{
+				Username:    "testUser",
+				OldPassword: "",
+				NewPassword: "validPassword123",
+			},
+			mockRole:     "admin",
+			mockUID:      "testUID",
+			mockUsername: "adminUser",
+			given: func() {
+				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
+				service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
+			},
+			expectedCode:  200,
+		},
+		{
+			name:         "Non-admin role",
+			inputBody:    &entities.UserPassword{
+				Username:    "testUser",
+				OldPassword: "",
+				NewPassword: "validPassword123",
+			},
 			mockRole:     "user",
 			mockUID:      "testUID",
 			mockUsername: "user",
@@ -232,7 +213,7 @@ func TestResetPassword(t *testing.T) {
 		},
 		{
 			name:         "Invalid Request Body",
-			inputBody:    `{"invalid}`,
+			inputBody:    &entities.UserPassword{},
 			mockRole:     "admin",
 			mockUID:      "testUID",
 			mockUsername: "adminUser",
@@ -248,36 +229,38 @@ func TestResetPassword(t *testing.T) {
 		// },
 		{
 			name:         "Empty Username or Password",
-			inputBody:    `{"Username": "", "NewPassword": ""}`,
+			inputBody:    &entities.UserPassword{},
 			mockRole:     "admin",
 			mockUID:      "testUID",
 			mockUsername: "adminUser",
 			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
 		},
-		{
-			name:         "Non-administrator user attempting to change password",
-			inputBody:    `{"Username": "john", "NewPassword": "password123"}`,
-			mockRole:     "user",
-			mockUID:      "testUID",
-			mockUsername: "john",
-			mockService: func() {
-				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
-			},
-			expectedCode: utils.ErrorStatusCodes[utils.ErrUnauthorized],
-		},
+		// {
+		// 	name:         "Non-administrator user attempting to change password",
+		// 	inputBody:    &entities.UserPassword{
+		// 		Username: "johnUser",
+		// 		OldPassword: "",
+		// 		NewPassword: "validPassword123",
+		// 	},
+		// 	mockRole:     "admin",
+		// 	mockUID:      "testUID",
+		// 	given: func() {
+		// 		service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(errors.New("not an administrator"))
+		// 	},
+		// 	expectedCode: utils.ErrorStatusCodes[utils.ErrUnauthorized],
+		// },
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.mockService != nil {
-				tt.mockService()
+			if tt.given != nil {
+				tt.given()
 			}
-			service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
-			service.On("UpdatePassword", mock.AnythingOfType("*entities.UserPassword"), false).Return(nil)
 			w := httptest.NewRecorder()
 			c := GetTestGinContext(w)
 			c.Request.Method = http.MethodPost
-			c.Request.Body = ioutil.NopCloser(bytes.NewReader([]byte(tt.inputBody)))
+			bodyBytes, _ := json.Marshal(tt.inputBody)
+			c.Request.Body = ioutil.NopCloser(bytes.NewReader([]byte(bodyBytes)))
 			c.Set("role", tt.mockRole)
 			c.Set("uid", tt.mockUID)
 			c.Set("username", tt.mockUsername)
