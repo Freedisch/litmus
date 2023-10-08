@@ -213,7 +213,6 @@ func TestResetPassword(t *testing.T) {
 		},
 		{
 			name:         "Invalid Request Body",
-			inputBody:    &entities.UserPassword{},
 			mockRole:     "admin",
 			mockUID:      "testUID",
 			mockUsername: "adminUser",
