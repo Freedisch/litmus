@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -261,6 +262,56 @@ func TestFetchUsers(t *testing.T) {
 	}
 }
 
+func TestInviteUsers(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name         string
+		projectID    string
+		given        func()
+		expectedCode int
+	}{
+		{
+			name:      "Successfully invite users",
+			projectID: "testProjectID",
+			given: func() {
+				projectMembers := []*entities.Member{
+					&entities.Member{UserID: "user1ID"},
+					&entities.Member{UserID: "user2ID"},
+				}
+				
+				service.On("GetProjectMembers", "testProjectID", "all").Return(projectMembers, nil)
+				uids := []string{"user1ID", "user2ID"}
+				users := &[]entities.User{
+					{ID: "user1ID", Username: "user1"},
+					{ID: "user2ID", Username: "user2"},
+				}
+				service.On("InviteUsers", uids).Return(users, nil)
+			},
+			expectedCode: http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Params = gin.Params{
+				{"project_id", tt.projectID},
+			}
+
+			tt.given()
+
+			rest.InviteUsers(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+		})
+	}
+}
+
+
 func TestLoginUser(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
@@ -357,27 +408,95 @@ func TestLoginUser(t *testing.T) {
 	}
 }
 
-
 func TestLogoutUser(t *testing.T) {
-	// given
-	w := httptest.NewRecorder()
-	ctx := GetTestGinContext(w)
-	service := new(services.ApplicationService)
-	// when
-	rest.LogoutUser(*service)(ctx)
-	// then
-	assert.Equal(t, 401, w.Code)
+	gin.SetMode(gin.TestMode)
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name           string
+		givenToken     string
+		given          func()
+		expectedCode   int
+		expectedOutput string
+	}{
+		{
+			name:       "Successfully logout",
+			givenToken: "Bearer testToken",
+			given: func() {
+				service.On("RevokeToken", "testToken").Return(nil)
+			},
+			expectedCode:   http.StatusOK,
+			expectedOutput: `{"message":"successfully logged out"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request, _ = http.NewRequest(http.MethodPost, "/", nil)
+			c.Request.Header.Set("Authorization", tt.givenToken)
+
+			tt.given()
+
+			rest.LogoutUser(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+			assert.Equal(t, tt.expectedOutput, w.Body.String())
+		})
+	}
 }
 
-func TestUpdatePassword(t *testing.T){
-	// given
-	w := httptest.NewRecorder()
-	ctx := GetTestGinContext(w)
-	service := new(services.ApplicationService)
-	// when
-	rest.LogoutUser(*service)(ctx)
-	// then
-	assert.Equal(t, 401, w.Code)
+
+
+func TestUpdatePassword(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name                 string
+		givenBody            string
+		givenUsername        string
+		givenStrictPassword  bool
+		givenServiceResponse error
+		expectedCode         int
+		expectedOutput       string
+	}{
+		{
+			name:                 "Successfully update password",
+			givenBody:            `{"oldPassword":"oldPass", "newPassword":"newPass"}`,
+			givenUsername:        "testUser",
+			givenStrictPassword:  false,
+			givenServiceResponse: nil,
+			expectedCode:         http.StatusOK,
+			expectedOutput:       `{"message":"password has been updated successfully"}`,
+		},
+		// ... add more test cases here as needed
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request, _ = http.NewRequest(http.MethodPost, "/", strings.NewReader(tt.givenBody))
+			c.Request.Header.Set("Content-Type", "application/json")
+			c.Set("username", tt.givenUsername)
+
+			utils.StrictPasswordPolicy = tt.givenStrictPassword
+
+			userPassword := entities.UserPassword{
+				Username:    tt.givenUsername,
+				OldPassword: "oldPass",
+				NewPassword: "newPass",
+			}
+			service.On("UpdatePassword", &userPassword, true).Return(tt.givenServiceResponse)
+
+			rest.UpdatePassword(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+			assert.Equal(t, tt.expectedOutput, w.Body.String())
+		})
+	}
 }
 
 func TestResetPassword(t *testing.T) {
