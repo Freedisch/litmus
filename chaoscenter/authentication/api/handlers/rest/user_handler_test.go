@@ -56,44 +56,57 @@ func MockJsonPost(c *gin.Context, content interface{}) {
 
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonbytes))
 }
-type MockApplicationService interface {
-	mock.Mock
+
+func TestCreateUser(t *testing.T) {
+	service := new(mocks.MockedApplicationService)
+	tests := []struct {
+		name string
+		inputBody *entities.User
+		mockRole string
+		given func()
+		expectedCode int
+	}{
+		{
+			name: "successfully",
+			inputBody: &entities.User{
+				Username: "newUser",
+				Password: "validPassword123",
+				Email:    "newuser@example.com",
+				Name:     "John Doe",
+				Role:     entities.RoleUser,
+			},
+			mockRole: "admin",
+			given: func() {
+				service.On("CreateUser", mock.AnythingOfType("*entities.User")).Return(&entities.User{
+					ID:       "newUserId",
+					Username: "newUser",
+					Email:    "newuser@example.com",
+					Name:     "John Doe",
+					Role:     entities.RoleUser,
+				}, nil)
+			},
+			expectedCode: 200,
+
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Set("role", tc.mockRole)
+			if tc.inputBody != nil {
+				b, _ := json.Marshal(tc.inputBody)
+				c.Request = httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(b))
+			}
+
+			tc.given()
+
+			rest.CreateUser(service)(c)
+			assert.Equal(t, tc.expectedCode, w.Code)
+		})
+	}
 }
-// func TestCreateUser(t *testing.T) {
-// 		// Create a mock service
-// 		mockService := &MockApplicationService{}
-	
-// 		// Create a new HTTP request
-// 		req, err := http.NewRequest("POST", "/users", nil)
-// 		if err != nil {
-// 			t.Fatal(err)
-// 		}
-	
-// 		// Create a new HTTP recorder
-// 		rr := httptest.NewRecorder()
-	
-// 		// Create a new Gin context
-// 		c, _ := gin.CreateTestContext(rr)
-// 		c.Request = req
-	
-// 		// Call the CreateUser function
-// 		rest.CreateUser(mockService)(c)
-	
-// 		// Check the response status code
-// 		if status := rr.Code; status != http.StatusOK {
-// 			t.Errorf("handler returned wrong status code: got %v want %v",
-// 				status, http.StatusOK)
-// 		}
-	
-// 		// Check the response body
-// 		expected := `{"message":"User created successfully"}`
-// 		if rr.Body.String() != expected {
-// 			t.Errorf("handler returned unexpected body: got %v want %v",
-// 				rr.Body.String(), expected)
-// 		}
-	
-	
-// }
 
 func TestUpdateuser(t *testing.T) {
 	// given
@@ -413,16 +426,56 @@ func TestCreateApiToken(t *testing.T) {
 }
 
 
-// func TestGetApiTokens(t *testing.T){
-// 	// given
-// 	w := httptest.NewRecorder()
-// 	ctx := GetTestGinContext(w)
-// 	service := new(services.ApplicationService)
-// 	// when
-// 	rest.GetApiTokens(*service)(ctx)
-// 	// then
-// 	assert.Equal(t, http.StatusBadRequest, w.Code)
-// }
+func TestGetApiTokens(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name          string
+		uid           string
+		given         func()
+		expectedCode  int
+		expectedToken []entities.ApiToken
+	}{
+		{
+			name: "Valid Request",
+			uid:  "testUserID",
+			given: func() {
+				returnedTokens := []entities.ApiToken{
+					{Token: "sampleToken1"},
+					{Token: "sampleToken2"},
+				}
+				service.On("GetApiTokensByUserID", "testUserID").Return(returnedTokens, nil)
+			},
+			expectedCode: http.StatusOK,
+			expectedToken: []entities.ApiToken{
+				{Token: "sampleToken1"},
+				{Token: "sampleToken2"},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Params = []gin.Param{{Key: "uid", Value: tt.uid}}
+
+			tt.given()
+
+			rest.GetApiTokens(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+			if tt.expectedCode == http.StatusOK {
+				var response map[string][]entities.ApiToken
+				json.Unmarshal(w.Body.Bytes(), &response)
+				assert.Equal(t, tt.expectedToken, response["apiTokens"])
+			}
+		})
+	}
+}
+
 
 func TestDeleteApiToken(t *testing.T){
 	// given
