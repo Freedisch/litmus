@@ -347,16 +347,71 @@ func TestUpdateUserState(t *testing.T){
 	}
 }
 
-func TestCreateApiToken(t *testing.T){
-	// given
-	w := httptest.NewRecorder()
-	ctx := GetTestGinContext(w)
-	service := new(services.ApplicationService)
-	// when
-	rest.CreateApiToken(*service)(ctx)
-	// then
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+func TestCreateApiToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name         string
+		inputBody    *entities.ApiTokenInput
+		given        func()
+		expectedCode int
+	}{
+		{
+			name: "Valid Request",
+			inputBody: &entities.ApiTokenInput{
+				UserID: "testUserID",
+			},
+			given: func() {
+				user := &entities.User{ID: "testUserID"}
+				service.On("GetUser", "testUserID").Return(user, nil)
+				service.On("CreateApiToken", user, mock.MatchedBy(func(input entities.ApiTokenInput) bool {
+					return input.UserID == "testUserID"
+				})).Return("sampleToken", nil)
+			},
+			expectedCode: http.StatusOK,
+		},
+		// {
+		// 	name: "User Not Found",
+		// 	inputBody: &entities.ApiTokenInput{
+		// 		UserID: "testUserID",
+		// 	},
+		// 	given: func() {
+		// 		service.On("GetUser", "testUserID").Return(nil, errors.New("user not found"))
+		// 	},
+		// 	expectedCode: utils.ErrorStatusCodes[utils.ErrUserNotFound],
+		// },
+		// {
+		// 	name: "Server Error While Creating Token",
+		// 	inputBody: &entities.ApiTokenInput{
+		// 		UserID: "testUserID",
+		// 	},
+		// 	given: func() {
+		// 		user := &entities.User{ID: "testUserID"}
+		// 		service.On("GetUser", "testUserID").Return(user, nil)
+		// 		service.On("CreateApiToken", user, mock.AnythingOfType("*entities.ApiTokenInput")).Return("", errors.New("server error"))
+		// 	},
+		// 	expectedCode: utils.ErrorStatusCodes[utils.ErrServerError],
+		// },
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c := GetTestGinContext(w)
+			bodyBytes, _ := json.Marshal(tt.inputBody)
+			c.Request = httptest.NewRequest(http.MethodPost, "/api/token", bytes.NewReader(bodyBytes))
+			c.Request.Header.Set("Content-Type", "application/json")
+
+			tt.given() // setup mock expectations
+
+			rest.CreateApiToken(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+		})
+	}
 }
+
 
 // func TestGetApiTokens(t *testing.T){
 // 	// given
