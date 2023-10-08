@@ -272,15 +272,79 @@ func TestResetPassword(t *testing.T) {
 }
 
 func TestUpdateUserState(t *testing.T){
-	// given
-	w := httptest.NewRecorder()
-	ctx := GetTestGinContext(w)
-	ctx.Set("role", "user")
-	service := new(services.ApplicationService)
-	// when
-	rest.UpdateUserState(*service)(ctx)
-	// then
-	assert.Equal(t, 401, w.Code)
+	service := new(mocks.MockedApplicationService)
+	const (
+		myTrue  = 0 == 0
+		myFalse = 0 != 0
+	)
+	deactivate := myFalse
+	tests := []struct {
+		name string
+		inputBody *entities.UpdateUserState
+		mockRole string
+		mockUsername string
+		mockUID string
+		given func()
+		expectedCode int
+	}{
+		{
+			name: "successfully",
+			inputBody: &entities.UpdateUserState{
+				Username: "adminUser",
+				IsDeactivate: &deactivate,
+			},
+			mockRole: "admin",
+			mockUsername: "adminUser",
+			mockUID: "tetstUUIS",
+			given: func() {
+				service.On("IsAdministrator", mock.AnythingOfType("*entities.User")).Return(nil)
+				service.On("UpdateStateTransaction", mock.AnythingOfType("entities.UpdateUserState")).Return(nil)
+
+			},
+			expectedCode: 200,
+		},
+		{
+			name: "failed to desactivate",
+			inputBody: &entities.UpdateUserState{
+				Username: "adminUser",
+				IsDeactivate: nil,
+			},
+			mockRole: "admin",
+			mockUsername: "adminUser",
+			mockUID: "tetstUUIS",
+			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
+		},
+		{
+			name: "failed to authorize",
+			inputBody: &entities.UpdateUserState{
+				IsDeactivate: &deactivate,
+			},
+			mockRole: "user",
+			mockUsername: "adminUser",
+			mockUID: "tetstUUIS",
+			expectedCode: utils.ErrorStatusCodes[utils.ErrUnauthorized],
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.given != nil {
+				tc.given()
+			}
+			w := httptest.NewRecorder()
+			c := GetTestGinContext(w)
+			c.Request.Method = http.MethodPost
+			bodyBytes, _ := json.Marshal(tc.inputBody)
+			c.Request.Body = ioutil.NopCloser(bytes.NewReader([]byte(bodyBytes)))
+			c.Set("role", tc.mockRole)
+			c.Set("uid", tc.mockUID)
+			c.Set("username", tc.mockUsername)
+
+			rest.UpdateUserState(service)(c)
+
+			assert.Equal(t, tc.expectedCode, w.Code)
+		})
+	}
 }
 
 func TestCreateApiToken(t *testing.T){
