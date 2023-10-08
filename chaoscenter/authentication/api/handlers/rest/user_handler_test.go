@@ -108,46 +108,157 @@ func TestCreateUser(t *testing.T) {
 	}
 }
 
-func TestUpdateuser(t *testing.T) {
-	// given
-	w := httptest.NewRecorder()
-	ctx := GetTestGinContext(w)
-	service := new(services.ApplicationService)
-	// when
-	rest.UpdateUser(*service)(ctx) // pass the interface to the UpdateUser function
-	// then
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+func TestUpdateUser(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name         string
+		uid          string
+		inputBody    *entities.UserDetails
+		given        func()
+		expectedCode int
+		expectedMsg  string
+	}{
+		{
+			name:         "Successful update with password",
+			uid:          "testUID",
+			inputBody:    &entities.UserDetails{Email: "test@email.com", Name: "Test", Password: "TestPassword"},
+			given: func() {
+				service.On("UpdateUser", mock.AnythingOfType("*entities.UserDetails")).Return(nil)
+			},
+			expectedCode: http.StatusOK,
+			expectedMsg:  "User details updated successfully",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Set("uid", tt.uid)
+
+			if tt.inputBody != nil {
+				b, _ := json.Marshal(tt.inputBody)
+				c.Request = httptest.NewRequest(http.MethodPost, "/path", bytes.NewBuffer(b))
+			}
+
+			tt.given()
+
+			rest.UpdateUser(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+			var response map[string]string
+			json.Unmarshal(w.Body.Bytes(), &response)
+			assert.Equal(t, tt.expectedMsg, response["message"])
+		})
+	}
 }
 
-// func TestGetUser(t *testing.T) {
-// 	// given
-// 	w := httptest.NewRecorder()
-// 	ctx := GetTestGinContext(w)
-// 	service := new(services.ApplicationService)
-// 	key := uuid.NewString()
-// 	ctx.Params = []gin.Param{
-// 		{
-// 			Key:  "uid",
-// 			Value: key,
-// 		},
-// 	}
-// 	// when
-// 	rest.GetUser(*service)(ctx) // pass the interface to the GetUser function
-// 	// then
-// 	assert.Equal(t, http.StatusBadRequest, w.Code)
-// }
 
-// func TestFetchUsers(t *testing.T) {
-// 	// given
-// 	w := httptest.NewRecorder()
-// 	ctx := GetTestGinContext(w)
-// 	ctx.Set("role", "admin")
-// 	service := new(services.ApplicationService)
-// 	// when
-// 	rest.FetchUsers(*service)(ctx) // pass the interface to the FetchUsers function
-// 	// then
-// 	assert.Equal(t, http.StatusBadRequest, w.Code)
-// }
+func TestGetUser(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name         string
+		uid          string
+		given        func()
+		expectedCode int
+	}{
+		{
+			name:         "Successfully retrieve user",
+			uid:          "testUID",
+			given: func() {
+				user := &entities.User{
+					ID:       "testUID",
+					Username: "testUser",
+					Email:    "test@example.com",
+				}
+				service.On("GetUser", "testUID").Return(user, nil)
+			},
+			expectedCode: http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Params = gin.Params{
+				{"uid", tt.uid},
+			}
+
+			tt.given()
+
+			rest.GetUser(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+			if w.Code == http.StatusOK {
+				var user entities.User
+				_ = json.Unmarshal(w.Body.Bytes(), &user)
+				assert.Equal(t, tt.uid, user.ID)
+			}
+		})
+	}
+}
+
+
+func TestFetchUsers(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	service := new(mocks.MockedApplicationService)
+
+	tests := []struct {
+		name          string
+		role          string
+		given         func()
+		expectedCode  int
+	}{
+		{
+			name:         "Successfully retrieve users by admin",
+			role:         "admin",
+			given: func() {
+				users := &[]entities.User{
+					{
+						ID:       "testUID1",
+						Username: "testUser1",
+						Email:    "test1@example.com",
+					},
+					{
+						ID:       "testUID2",
+						Username: "testUser2",
+						Email:    "test2@example.com",
+					},
+				}
+				service.On("GetUsers").Return(users, nil)
+			},
+			expectedCode: http.StatusOK,
+		},
+		{
+			name:         "Non-admin tries to retrieve users",
+			role:         "user",
+			given: func() {},
+			expectedCode: utils.ErrorStatusCodes[utils.ErrUnauthorized],
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Set("role", tt.role)
+
+			tt.given()
+
+			rest.FetchUsers(service)(c)
+
+			assert.Equal(t, tt.expectedCode, w.Code)
+		})
+	}
+}
 
 func TestLoginUser(t *testing.T) {
 	// given
