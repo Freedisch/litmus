@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -41,23 +40,6 @@ func GetTestGinContext(w *httptest.ResponseRecorder) *gin.Context {
 	return ctx
 }
 
-
-func MockJsonGet(c *gin.Context, params gin.Params, u url.Values) {
-	c.Request.Method = "GET"
-	c.Request.Header.Set("Content-Type", "application/josn")
-}
-
-func MockJsonPost(c *gin.Context, content interface{}) {
-	c.Request.Method = "POST"
-	c.Request.Header.Set("Content-Type", "application/json")
-	c.Set("role", "admin")
-	jsonbytes, err := json.Marshal(content)
-	if err != nil {
-		panic(err)
-	}
-
-	c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonbytes))
-}
 
 func TestCreateUser(t *testing.T) {
 	service := new(mocks.MockedApplicationService)
@@ -111,8 +93,6 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestUpdateUser(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
 	service := new(mocks.MockedApplicationService)
 
 	tests := []struct {
@@ -160,8 +140,6 @@ func TestUpdateUser(t *testing.T) {
 
 
 func TestGetUser(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
 	service := new(mocks.MockedApplicationService)
 
 	tests := []struct {
@@ -209,8 +187,6 @@ func TestGetUser(t *testing.T) {
 
 
 func TestFetchUsers(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
 	service := new(mocks.MockedApplicationService)
 
 	tests := []struct {
@@ -263,8 +239,6 @@ func TestFetchUsers(t *testing.T) {
 }
 
 func TestInviteUsers(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
 	service := new(mocks.MockedApplicationService)
 
 	tests := []struct {
@@ -313,8 +287,6 @@ func TestInviteUsers(t *testing.T) {
 
 
 func TestLoginUser(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
 	service := new(mocks.MockedApplicationService)
 
 	tests := []struct {
@@ -333,7 +305,7 @@ func TestLoginUser(t *testing.T) {
 				userFromDB := &entities.User{
 					ID:       "testUserID",
 					Username: "testUser",
-					Password: "hashedPassword", // This should be an actual hashed version of "testPassword"
+					Password: "hashedPassword",
 					Email:    "test@example.com",
 				}
 				service.On("FindUserByUsername", "testUser").Return(userFromDB, nil)
@@ -348,12 +320,12 @@ func TestLoginUser(t *testing.T) {
 		},
 		{
 			name:         "Invalid JSON body",
-			given:        func() {}, // No mocks needed here
+			given:        func() {},
 			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
 		},
 		{
 			name:         "Missing Username or Password",
-			given:        func() {}, // No mocks needed here
+			given:        func() {},
 			expectedCode: utils.ErrorStatusCodes[utils.ErrInvalidRequest],
 		},
 		{

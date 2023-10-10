@@ -4,59 +4,12 @@ import (
 	"context"
 	"testing"
 
-	"github.com/golang-jwt/jwt"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/handlers/grpc"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/mocks"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/presenter/protos"
 	"github.com/litmuschaos/litmus/chaoscenter/authentication/pkg/entities"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
-
-type MockServer struct {
-	grpc.ServerGrpc
-}
-
-func (m *MockServer) ValidateToken(token string) (*jwt.Token, error) {
-	claims := jwt.MapClaims{
-		"uid": "12345",
-	}
-	return &jwt.Token{
-		Claims: claims,
-	}, nil
-}
-
-// Mocking RbacValidator function
-func (m *MockServer) RbacValidator(uid, projectId string, requiredRoles []string, invitation bool, service interface{}) error {
-	return nil
-}
-
-// func TestValidateRequest_Success(t *testing.T) {
-// 	s := &MockServer{}
-// 	req := &protos.ValidationRequest{
-// 		Jwt:           "valid-jwt",
-// 		ProjectId:     "project-id",
-// 		RequiredRoles: []string{"admin"},
-// 		Invitation:    "true",
-// 	}
-
-// 	ctx := context.Background()
-
-// 	// Call the function
-// 	resp, err := s.ValidateRequest(ctx, req)
-
-// 	// Assertions
-// 	assert.Nil(t, err, "Expected no error")
-// 	assert.NotNil(t, resp, "Expected non-nil response")
-// 	assert.True(t, resp.IsValid, "Expected the request to be valid")
-// 	assert.Empty(t, resp.Error, "Expected error message to be empty")
-// }
-
-
-// Mocking ApplicationService methods
-type MockApplicationService struct {
-	mock.Mock
-}
 
 func TestGetProjectById(t *testing.T) {
 	s := &grpc.ServerGrpc{

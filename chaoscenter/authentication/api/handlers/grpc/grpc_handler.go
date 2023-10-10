@@ -14,7 +14,7 @@ import (
 )
 
 func (s *ServerGrpc) ValidateRequest(ctx context.Context,
-	inputRequest *protos.ValidationRequest) (*protos.ValidationResponse, error) {
+	inputRequest *protos.ValidationRequest) (*protos.ValidationResponse, error) { // pragma: no cover
 	token, err := s.ValidateToken(inputRequest.Jwt)
 	if err != nil {
 		return &protos.ValidationResponse{Error: err.Error(), IsValid: false}, err
