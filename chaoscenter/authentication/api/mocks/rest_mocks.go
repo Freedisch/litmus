@@ -197,3 +197,9 @@ func (m *MockedApplicationService) UpdateStateTransaction(userRequest entities.U
 	args := m.Called(userRequest)
 	return args.Error(0)
 }
+
+
+func (m *MockedApplicationService) RbacValidator(userID, resourceID string, rules []string, invitationStatus string) error {
+	args := m.Called(userID, resourceID, rules, invitationStatus)
+	return args.Error(0)
+}
