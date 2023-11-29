@@ -464,5 +464,113 @@ jobs:
 As you seen, you can run unit tests before build docker image. If unit tests failed, no further jobs will be executed. You can check our actual unit testing workflow [here](https://github.com/litmuschaos/litmus/blob/727edcb308aa9bedbb3824b0594ae9b66411931a/.github/workflows/build.yml#L83).
 
 # Frontend
-TBD
+
+#### Introduction to Frontend Testing
+
+- **Purpose:** Frontend testing ensures the user interface of a web application works as expected. It focuses on testing the interactions, visual elements, and integration points of an application.
+- **Goal:** The aim is to create a reliable, bug-free user experience, enhancing both functionality and usability.
+- **Recommendation:** Prior to diving into testing, familiarizing oneself with fundamental concepts and tools (like Jest, React Testing Library, etc.) is beneficial.
+
+
+#### Testing Structure
+
+Frontend testing typically follows a structured approach:
+
+1. **Setup:** Initialize the test environment, mock necessary data and states. For the setup you need to ensure to use the testWrapper in the testUtils. The wrapper has dependency that could be used to the wrappe your component 
+
+```typescript
+export function TestWrapper({ children }: TestWrapperProps): React.ReactElement {
+  const getString = (key: string): string => key;
+  const apolloClient = new ApolloClient({ cache: new InMemoryCache() });
+  return (
+    <AppStoreContext.Provider
+      value={{
+        projectID: 'litmuschaos-test-project',
+        projectRole: 'Owner',
+        currentUserInfo: {
+          userRole: 'admin',
+          ID: 'uid',
+          username: 'admin',
+        },
+        renderUrl: `/account/uid`,
+        matchPath: '/account/:accountID',
+        updateAppStore: () => void NO_OPERATION,
+      }}
+    >
+      <StringsContext.Provider value={{ data: strings as never, getString }}>
+        <ReactQueryProvider>
+          <ApolloProvider client={apolloClient}>
+            <BrowserRouter>{children}</BrowserRouter>
+          </ApolloProvider>
+        </ReactQueryProvider>
+      </StringsContext.Provider>
+    </AppStoreContext.Provider>
+  );
+}
+```
+2. **Execution:** Render the component or invoke the function/method under test.
+3. **Validation:** Verify that the output or behavior matches expectations.
+
+#### Types of Frontend Tests
+
+1. **Component Rendering Tests:**
+   - **Objective:** Ensure components render correctly under various props and states.
+   - **Tools:** Use React Testing Library for rendering components in a test environment.
+   - **Example:** Test if a button renders with the correct label when given specific props.
+
+2. **Event Handling Tests:**
+   - **Objective:** Verify that user interactions like clicks, input changes, etc., are handled correctly.
+   - **Tools:** Simulate events using `fireEvent` or `userEvent` from React Testing Library.
+   - **Example:** Test if clicking a submit button correctly triggers a form submission event.
+   ```typescript
+      test('calls handleClose on cancel', () => {
+      const { getByText } = setup();
+      fireEvent.click(getByText('cancel'));
+      expect(mockHandleClose).toHaveBeenCalled();
+   });
+   ```
+
+3. **Integration Tests:**
+   - **Objective:** Ensure components interact correctly with each other and with backend services.
+   - **Tools:** Mock API calls using libraries like Axios Mock Adapter or Jest.
+   - **Example:** Test if a data-fetching component correctly displays data from an API.
+
+4. **Visual Regression Tests:**
+   - **Objective:** Ensure UI changes do not break the visual appearance of components.
+   - **Tools:** Use tools like Storybook or Chromatic for visual testing.
+   - **Example:** Compare screenshots of components before and after changes to detect visual discrepancies.
+
+#### Best Practices
+
+- **Isolation:** Test components in isolation to identify specific issues.
+- **Mocking:** Utilize mocking for external dependencies like APIs or complex state.
+- **Code Coverage:** Aim for high test coverage but prioritize testing critical paths over trivial ones.
+- **Asynchronous Testing:** Handle async operations accurately using `waitFor` or `findBy` methods.
+- **Performance:** Be mindful of test performance, avoiding unnecessary renders or heavy computations.
+
+#### Testing Scenarios
+
+1. **Responsive Design Testing:**
+   - Test if components adapt correctly to different screen sizes and orientations.
+2. **Accessibility Testing:**
+   - Ensure components meet accessibility standards, using tools like Axe or Lighthouse.
+
+#### Test Environment
+
+- **Setup:** Configure a test environment that closely mimics the production environment.
+- **Tools:** Use tools like Jest for setting up global configurations and test runners.
+
+#### Mocking Strategy
+
+- **Purpose:** Mocking in frontend tests helps simulate behavior of external modules and APIs.
+- **Implementation:** Use Jest or similar libraries to mock modules, API calls, and complex state.
+
+#### Continuous Integration
+
+- **Integration with CI/CD:** Integrate frontend tests in the CI/CD pipeline for automated testing.
+- **Tools:** Use platforms like GitHub Actions or Jenkins to automate test execution on code commits.
+
+#### Conclusion
+
+Frontend testing is a vital part of software development, ensuring the reliability and quality of user interfaces. By following structured testing strategies, using appropriate tools, and adhering to best practices, developers can significantly enhance the user experience of their applications.
 
