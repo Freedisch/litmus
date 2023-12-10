@@ -467,7 +467,7 @@ As you seen, you can run unit tests before build docker image. If unit tests fai
 
 #### Introduction to Frontend Testing
 
-Similar to Backend test cases, frontend testing ensures the user interface works as expected. It focuses on testing the interactions, visual elements, and integration points of an application. The purpose is to create a reliable, bug-free user experience, enhancing both functionality and usability. Prior diving in Litmus frontend strategy it's important to familiarize oneself with fundamental concepts and tools like the React Testing Library. Check this video to learn more. 
+Similar to Backend test cases, frontend testing ensures the user interface works as expected. It focuses on testing the interactions, visual elements, and integration points of an application. The purpose is to create a reliable, bug-free user experience, enhancing both functionality and usability. Prior diving in Litmus frontend strategy it's important to familiarize oneself with fundamental concepts and tools like the React Testing Library.
 
 
 #### Mocking Strategy
@@ -700,7 +700,7 @@ By applying these enhanced best practices with appropriate code examples, your t
 This report visually represents the extent to which the codebase is covered by tests, highlighting areas tested and those lacking sufficient coverage. It breaks down the coverage into key metrics like line, function, and branch coverage, providing a comprehensive view that aids in identifying gaps in the testing strategy
 
 ```bash
-# Check the entire backend code coverage
+# Check the entire frontend code coverage
 # in the project root frontend folder
 yarn run test:coverage .
 
