@@ -2,8 +2,9 @@ name: Litmus-CI
 on:
   issue_comment:
     types: [created]
-    branches:
-      - master
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ master, ]
 
 jobs:
   # Job for finding last commit sha of pull-request
@@ -217,3 +218,9 @@ jobs:
       - name: Deleting KinD cluster
         if: always()
         run: kind delete cluster
+    
+    
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
